@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnautica2</title>
+    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+</head>
+<body>
+<nav class="top-nav">
+    <img th:src="@{/img/alec.png}" alt="Logo">
+
+    <div class="right-menu">
+        <nav role="navigation" class="primary-navigation">
+            <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Language &dtrif;</a>
+                    <ul class="dropdown">
+                        <li><a href="#">English</a></li>
+                        <li><a href="#">Viet Nam</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+</nav>
+
+<nav class="sidebar">
+    <div class="search-container">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21.53 20.47l-3.66-3.66A8.963 8.963 0 0 0 20 11c0-4.97-4.03-9-9-9S2 6.03 2 11s4.03 9 9 9c2.22 0 4.24-.8 5.81-2.13l3.66 3.66a.75.75 0 1 0 1.06-1.06zM3.5 11a7.5 7.5 0 1 1 15 0 7.5 7.5 0 0 1-15 0z"/>
+        </svg>
+        <input placeholder="Search" type="search" class="input">
+    </div>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">News</a></li>
+        <li><a href="#">Games</a></li>
+        <li><a href="#">Guide</a></li>
+    </ul>
+</nav>
+
+<div class="content">
+    <div class="container">
+        <div class="video-section">
+            <div class="video">
+                <video width="100%" controls autoplay>
+                    <source th:src="@{/video/Subnautica.mp4}" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ thẻ video.
+                </video>
+            </div>
+            <div class="rate-container">
+                <h1>Tiêu chí rate</h1>
+                <div class="rate-grid">
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Gameplay</h3>
+                            <p>Based on 36 Reviews</p>
+                        </div>
+                        <div class="rate-value" id="gameplay-rate">7</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Music</h3>
+                            <p>Based on 36 Reviews</p>
+                        </div>
+                        <div class="rate-value" id="music-rate">65</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Graphic</h3>
+                            <p>Based on 36 Reviews</p>
+                        </div>
+                        <div class="rate-value" id="graphic-rate">56</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Story</h3>
+                            <p>Based on 36 Reviews</p>
+                        </div>
+                        <div class="rate-value" id="story-rate">86</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="metascore-section">
+            <div class="video-info">
+                <h2>Subnautica 2</h2>
+                <p><strong>PC|PS|XBOX</strong></p>
+                <p><strong>Developer:</strong> Unknow Worlds Entertaiment</p>
+            </div>
+            <div class="metascore-container">
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>Metascore</h4>
+                        <h3>Generally Favorable</h3>
+                        <p>Based on 36 Critic Reviews</p>
+                        <div class="progress-bar">
+                            <div class="progress">
+                                <div class="progress-green"></div>
+                                <div class="progress-yellow"></div>
+                                <div class="progress-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-container">
+                        <span id="metascore">75</span>
+                    </div>
+                </div>
+
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>IGN</h4>
+                        <h3>Generally Favorable</h3>
+                        <p>Based on 536 Critic Reviews</p>
+                        <div class="progress-bar">
+                            <div class="progress">
+                                <div class="progress-green"></div>
+                                <div class="progress-yellow"></div>
+                                <div class="progress-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metascore-value">26</div>
+                </div>
+
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>Steam</h4>
+                        <h3>Generally Favorable</h3>
+                        <p>Based on 3600 Critic Reviews</p>
+                        <div class="progress-bar">
+                            <div class="progress">
+                                <div class="progress-green"></div>
+                                <div class="progress-yellow"></div>
+                                <div class="progress-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metascore-value">36</div>
+                </div>
+
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>Userscore</h4>
+                        <h3>Generally Favorable</h3>
+                        <p>Based on 36 Critic Reviews</p>
+                        <div class="progress-bar">
+                            <div class="progress">
+                                <div class="progress-green"></div>
+                                <div class="progress-yellow"></div>
+                                <div class="progress-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metascore-value">80</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="divider">
+    <div class="game-detail">
+        <h1>Game detail</h1>
+        <p class="spaced-paragraph">Subnautica 2 is an upcoming action-adventure survival game under development by Unknown Worlds Entertainment. It is a sequel to 2018's Subnautica and the third game in the series after 2021's Subnautica: Below Zero.</p>
+        <p class="spaced-paragraph">Set on a new planet, Subnautica 2 will support single-player and co-op gameplay with a total of up to four players, the first time multiplayer gameplay is present in the series. A cinematic trailer showed a new vehicle, new creatures and environments and hinted at the introduction of a current mechanic that can drag the player to another area. Players will be able to modify their own DNA to acquire abilities, a feature that was originally cut from Subnautica.</p>
+    </div>
+    <hr class="divider">
+    <div class="game-detail">
+        <h1>Update</h1>
+        <p class="spaced-paragraph">The game was initially confirmed to be in the works on April 7, 2022, as "the next
+            game in the Subnautica universe". In November 2023, publisher Krafton revealed in a financial report that
+            it was to be released sometime in 2025. This was followed by another report on February 8, 2024, that described
+            it as a "multiplayer live-service game", creating fan backlash that prompted the developers to clarify that it
+            would have "no season passes, no battle passes, no subscription". The first screenshots of the game were also
+            published in 2024, some of which were hidden within Subnautica itself. A cinematic trailer for the game was
+            released on October 17, 2024, during the Xbox Partner Showcase. It is planned to be released as an early access title, and will
+            be available on PC and Xbox Series X and S. Unlike its predecessors, Subnautica 2 is made with Unreal Engine 5.</p>
+    </div>
+    <hr class="divider">
+    <div class="games-container">
+        <div class="header">
+            <h2>Related Games</h2>
+        </div>
+        <div class="games-list">
+            <div class="games-list-container">
+                <div class="game-card">
+                    <img th:src="@{/img/herta.jpg}" alt="games Name">
+                    <div class="games-info">
+                        <h3 class="game-title">game Name 1</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <img th:src="@{/img/herta.jpg}" alt="game Name">
+                    <div class="games-info">
+                        <h3 class="game-title">game Name 2</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <img th:src="@{/img/alec.png}" alt="game Name">
+                    <div class="games-info">
+
+                        <h3 class="game-title">game Name 3</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <img th:src="@{/img/herta.jpg}" alt="game Name">
+                    <div class="games-info">
+                        <h3 class="game-title">game Name 4</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <img th:src="@{/img/herta.jpg}" alt="game Name">
+                    <div class="games-info">
+                        <h3 class="game-title">game Name 5</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <img th:src="@{/img/alec.png}" alt="game Name">
+                    <div class="games-info">
+                        <h3 class="game-title">game Name 6</h3>
+                        <p class="game-description">game description goes here.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="scroll-button next-button">></button>
+
+            <button class="scroll-button pre-button"><</button>
+        </div>
+    </div>
+
+    <p style="height: 1500px;"></p>
+</div>
+
+<hr class="divider">
+<script th:src="@{/js/gameScript.js}"></script>
+
+</body>
+</html>

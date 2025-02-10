@@ -1,0 +1,448 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, Serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #423a49;
+    color: #ffffff;
+}
+
+.top-nav {
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.top-nav img {
+    height: 40px;
+}
+
+.top-nav .right-menu {
+    display: flex;
+    gap: 15px;
+}
+
+.top-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.top-nav a:hover {
+    background-color: #575757;
+}
+
+/*nav*/
+nav {
+    &.primary-navigation {
+        margin: 0 auto;
+        display: block;
+        padding: 0px 0 0 0;
+
+        font-size: 16px;
+
+        ul li {
+            list-style: none;
+            margin: 0 auto;
+            border-right: 2px solid #a25ecd;
+            display: inline-block;
+            padding: 0 30px;
+            position: relative;
+            text-decoration: none;
+            text-align: center;
+            font-family: arvo;
+        }
+
+        li a {
+            color: white;
+        }
+
+        li a:hover {
+            color: #7F6F8EFF;
+        }
+
+        li:hover {
+            cursor: pointer;
+        }
+
+        ul li ul {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            padding-left: 0;
+            left: 0;
+            display: none;
+            background-color: #423a49;
+            border-radius: 8px;
+        }
+
+        ul li:hover > ul,
+        ul li ul:hover {
+            visibility: visible;
+            opacity: 1;
+            display: block;
+            min-width: 250px;
+            text-align: left;
+            padding-top: 20px;
+        }
+
+        ul li ul li {
+            clear: both;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 20px;
+            border-style: none;
+        }
+
+        ul li ul li a:hover {
+            padding-left: 10px;
+            border-left: 2px solid #7F6F8EFF;
+            transition: all 0.3s ease;
+        }
+    }
+}
+
+a {
+
+    text-decoration: none;
+
+    &:hover {
+        color: #7F6F8EFF;
+    }
+
+}
+
+ul li ul li a { transition: all 0.5s ease; }
+
+/*endNAv*/
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 50px;
+    padding: 20px 10px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.sidebar ul li a:hover {
+    background-color: #575757;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    max-width: 190px;
+    margin: 10px 0;
+    transition: width 0.3s ease;
+}
+
+.input {
+    width: 100%;
+    height: 40px;
+    padding: 0 1rem;
+    padding-left: 2.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    background-color: #89898a;
+    color: #0d0c22;
+    transition: 0.3s ease;
+}
+
+.input::placeholder {
+    color: #dbdbe4;
+}
+
+.icon {
+    position: absolute;
+    left: 1rem;
+    fill: #9e9ea7;
+    width: 1rem;
+    height: 1rem;
+}
+
+.content {
+    margin-left: 200px;
+    margin-right: 20px;
+    padding: 20px;
+    margin-top: 70px;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 20px;
+}
+
+.video-section {
+    margin-top: 40px;
+    width: 60%;
+}
+
+.video video {
+    width: 100%;
+    border-radius: 15px;
+}
+
+.rate-container {
+    margin-top: 20px;
+}
+.rate-grid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.rate-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #7f6f8e;
+}
+
+.rate-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-shadow:  1px 1px 0 #403e3e;
+}
+
+.rate-info h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.rate-info p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #C7C2D6FF;
+}
+
+.metascore-container {
+
+    gap: 20px; /* Khoảng cách giữa các card */
+}
+.metascore-section {
+    width:40%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+.metascore-info h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #cad0ec;
+    text-transform: uppercase;
+}
+
+.metascore-info h3 {
+    margin: 5px 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.metascore-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #c7c2d6;
+}
+.metascore-card {
+    display: flex;
+    justify-content: space-between; /* Aligns items to the edges */
+    align-items: center; /* Centers items vertically */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 8px;
+    background-color: #7F6F8EFF;
+}
+
+.metascore-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    background-color: #00c853;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 8px;
+}
+.progress-bar {
+    width: 120%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress {
+    height: 100%;
+    display: flex;
+}
+
+.progress-green {
+    height: 100%;
+    background-color: green;
+    width: 50%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
+}
+
+.progress-yellow {
+    height: 100%;
+    background-color: yellow;
+    width: 30%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
+}
+
+.progress-red {
+    height: 100%;
+    background-color: red;
+    width: 20%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
+}
+
+.score-container, .metascore-value {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+    background-color: #00c853;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-shadow:  1px 1px 0 #403e3e;
+}
+
+.divider {
+    border: none; /* Xóa đường viền mặc định */
+    height: 1px; /* Chiều cao của đường kẻ */
+    background-color: #555; /* Màu sắc của đường kẻ */
+    margin: 20px 0; /* Khoảng cách trên và dưới */
+}
+
+.spaced-paragraph {
+    margin-top: 20px; /* Khoảng trống 20px ở đầu */
+    text-indent: 30px;
+}
+/*list*/
+
+.games-list {
+
+    grid-template-columns: repeat(3, 1fr); /* Tạo 4 cột bằng nhau */
+    position: relative; /* Để cho phép định vị mũi tên cuộn */
+    width: 100%; /* Hoặc một chiều rộng cố định */
+    overflow: hidden; /* Ẩn nội dung vượt quá chiều rộng */
+}
+
+.games-list-container {
+    display: flex;
+    transition: transform 0.3s ease; /* Tạo hiệu ứng cuộn mượt mà */
+}
+
+.game-card {
+    width: 25%; /* Chiều rộng của mỗi card (4 cột) */
+    flex-shrink: 0; /* Ngăn các card co lại khi không đủ chỗ */
+    border-radius: 10px; /* Bo tròn góc của card */
+    overflow: hidden; /* Ẩn phần ảnh thừa nếu nó vượt quá vùng chứa */
+    display: flex;
+    flex-direction: column; /* Sắp xếp theo chiều dọc */
+    align-items: center; /* Căn giữa theo chiều ngang */
+    margin: 10px;
+}
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.next-button {
+    right: 0;
+}
+.pre-button {
+    left: 0;
+}
+
+.game-card img {
+    width: 100%; /* Chiều rộng lấp đầy vùng chứa */
+    height: auto; /* Chiều cao tự động điều chỉnh */
+    border-top-left-radius: 10px; /* Bo tròn góc trên bên trái */
+    border-top-right-radius: 10px; /* Bo tròn góc trên bên phải */
+}
+
+.game-title{
+    align-items: center;
+    border-radius: 10px;
+}
+.game-info {
+    text-align: center; /* Căn giữa chữ trong game-info */
+    padding: 10px; /* Thêm khoảng cách xung quanh chữ */
+}
+.games-title {
+    margin-bottom: 5px; /* Khoảng cách giữa tiêu đề và mô tả */
+}
