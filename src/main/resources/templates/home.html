@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subnautica2</title>
+  <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+</head>
+<body>
+<nav class="top-nav">
+  <img th:src="@{/img/alec.png}" alt="Logo">
+  <div class="right-menu">
+    <nav role="navigation" class="primary-navigation">
+      <ul>
+        <li><a th:href="@{/login}">Login</a></li>
+        <li><a href="#">Language &dtrif;</a>
+          <ul class="dropdown">
+            <li><a href="#">English</a></li>
+            <li><a href="#">Viet Nam</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+</nav>
+
+<nav class="sidebar">
+  <div class="search-container">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21.53 20.47l-3.66-3.66A8.963 8.963 0 0 0 20 11c0-4.97-4.03-9-9-9S2 6.03 2 11s4.03 9 9 9c2.22 0 4.24-.8 5.81-2.13l3.66 3.66a.75.75 0 1 0 1.06-1.06zM3.5 11a7.5 7.5 0 1 1 15 0 7.5 7.5 0 0 1-15 0z"/>
+    </svg>
+    <input placeholder="Search" type="search" class="input">
+  </div>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">News</a></li>
+    <li><a href="#">Games</a></li>
+    <li><a href="#">Guide</a></li>
+  </ul>
+</nav>
+
+<div class="content">
+  <hr class="divider">
+  <div class="games-container">
+    <div class="header">
+      <h2>New Release</h2>
+    </div>
+    <div class="games-list">
+      <div class="games-list-container">
+        <div class="game-card">
+          <a th:href="@{/game_home}" >
+            <img  th:src="@{/img/subnautica_2.jpg}" alt="games Name">
+          </a>
+          <div class="games-info">
+            <h3 class="game-title">Subnautica 2</h3>
+            <p class="game-description">Diving game.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 2</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+
+            <h3 class="game-title">game Name 3</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 4</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 5</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 6</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+      </div>
+      <button class="scroll-button next-button">></button>
+
+      <button class="scroll-button pre-button"><</button>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="games-container">
+    <div class="header">
+      <h2>Upcoming Games</h2>
+    </div>
+    <div class="games-list">
+      <div class="games-list-container">
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="games Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 1</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 2</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+
+            <h3 class="game-title">game Name 3</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 4</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 5</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 6</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+      </div>
+      <button class="scroll-button next-button">></button>
+
+      <button class="scroll-button pre-button"><</button>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="games-container">
+    <div class="header">
+      <h2>Must play</h2>
+    </div>
+    <div class="games-list">
+      <div class="games-list-container">
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="games Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 1</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 2</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+
+            <h3 class="game-title">game Name 3</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 4</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 5</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 6</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+      </div>
+      <button class="scroll-button next-button">></button>
+
+      <button class="scroll-button pre-button"><</button>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="games-container">
+    <div class="header">
+      <h2>Game news</h2>
+    </div>
+    <div class="games-list">
+      <div class="games-list-container">
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="games Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 1</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 2</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+
+            <h3 class="game-title">game Name 3</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 4</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/herta.jpg}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 5</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img th:src="@{/img/alec.png}" alt="game Name">
+          <div class="games-info">
+            <h3 class="game-title">game Name 6</h3>
+            <p class="game-description">game description goes here.</p>
+          </div>
+        </div>
+      </div>
+      <button class="scroll-button next-button">></button>
+
+      <button class="scroll-button pre-button"><</button>
+    </div>
+  </div>
+</div>
+
+
+<script th:src="@{/js/gameScript.js}"></script>
+
+</body>
+</html>
