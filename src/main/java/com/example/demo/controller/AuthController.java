@@ -1,13 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
+import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class AuthController {
@@ -15,21 +16,25 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/signup")
+    public String showRegisterForm(Model model) {
+        model.addAttribute("userDTO", new UserDTO());
+        return "signup";
+    }
 
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session) {
-        User user = userService.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            session.setAttribute("user", user);
-            return "redirect:/game_home"; // Redirect đến trang chủ
-        } else {
-            return "login"; // Hiển thị lại form đăng nhập với thông báo lỗi
+    @PostMapping("/signup")
+    public String register(UserDTO userDTO, Model model) {
+        try {
+            userService.registerUser(userDTO);
+            return "redirect:/login?success";
+        } catch (Exception e) {
+            model.addAttribute("error", "Try another name " );
+            return "signup";
         }
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login"; // Redirect về trang đăng nhập
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";
     }
 }

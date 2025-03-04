@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>navbar</title>
+    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+</head>
+<body>
+<div th:fragment="navbar">
+    <nav class="top-nav">
+        <img th:src="@{/img/alec.png}" alt="Logo">
+        <div class="right-menu">
+            <nav role="navigation" class="primary-navigation">
+                <ul>
+                    <li th:block sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}">Login</a>
+
+                    </li>
+                    <li th:block sec:authorize="isAuthenticated()">
+                        <h2>Welcome, <span th:text="${#authentication.name}"></span>!</h2>
+                    </li>
+                    <li th:block sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="review-submit" >Logout</button>
+                        </form>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+    </nav>
+    <nav class="sidebar">
+        <div class="search-container">
+
+            <input placeholder="Search" type="search" class="input">
+        </div>
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/news}">News</a></li>
+            <li><a href="#">Games</a></li>
+            <li><a href="#">Guide</a></li>
+        </ul>
+
+    </nav>
+</div>
+
+</body>
+</html>

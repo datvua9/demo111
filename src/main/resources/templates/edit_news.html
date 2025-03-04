@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>Edit News</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Edit News</h2>
+    <form th:action="@{/admin/news/edit/{id}(id=${news.newsId})}" th:object="${news}" method="post">
+        <input type="hidden" th:field="*{newsId}"/>
+        <div class="form-group">
+            <label for="title">Tiêu đề</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Nội dung</label>
+            <textarea class="form-control" id="content" th:field="*{content}" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="created_at">Ngày viết</label>
+            <input type="date" class="form-control" id="created_at" th:field="*{created_at}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="newsImage">Ảnh (URL)</label>
+            <input type="url" class="form-control" id="newsImage" th:field="*{image}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a th:href="@{/admin/news}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

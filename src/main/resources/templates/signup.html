@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/signIn.css}">
+</head>
+<body>
+<div class="container">
+    <div class="heading">Sign In</div>
+    <form class="form" th:action="@{/signup}" th:object="${userDTO}" method="post">
+        <div class="input-field">
+            <input required="" autocomplete="off" type="text" th:field="*{username}"  id="username" />
+            <label for="username">User Name</label>
+        </div>
+        <div class="input-field">
+            <input required="" autocomplete="off" type="text"  th:field="*{email}"  id="mail" />
+            <label for="username">Mail</label>
+        </div>
+        <div class="input-field">
+            <input required="" autocomplete="off" type="password" th:field="*{password}" id="password" />
+            <label for="password">Password</label>
+        </div>
+        <div class="input-field">
+            <input required="" autocomplete="off" type="password"  id="confirmpassword" />
+            <label for="password">Password</label>
+        </div>
+        <div class="btn-container">
+            <button class="btn" type="submit">Sign Up</button>
+        </div>
+        <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+        <div>
+        <a th:href="@{/login}">Already have an account? Login</a>
+
+    </div>
+    </form>
+
+</div>
+</body>
+</html>

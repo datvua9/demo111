@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnautica2</title>
+    <link rel="stylesheet" th:href="@{/css/news.css}" />
+    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+</head>
+<body>
+<div th:insert="navbar::navbar"></div>
+
+<div class="news_content">
+    <img class="news_img" th:src="${featuredNews.image}" th:alt="${featuredNews.title}"/>
+    <h1 th:text="${featuredNews.title}">News</h1>
+</div>
+
+<hr class="divider">
+<div class="projcard-container">
+    <div class="projcard projcard-customcolor" style="--projcard-color: #F5AF41;" th:each="news : ${allNews}">
+        <a  th:href="@{/news/{id}(id=${news.newsId})}">
+            <div class="projcard-innerbox"  >
+                <img class="projcard-img" th:src="${news.image}" th:alt="${news.title}">
+                <div class="projcard-textbox">
+                    <div class="projcard-subtitle" th:text="${news.title}"></div>
+                    <div class="projcard-bar"></div>
+                    <div class="projcard-description" th:text="${news.content}"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll(".projcard-description").forEach(function(box) {
+        $clamp(box, {clamp: 6});
+    });
+
+</script>
+
+</body>
+</html>

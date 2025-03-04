@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html xmlns:th="http://www.thymeleaf.org">
+      <head>
+      <meta charset="UTF-8">
+      <title>Edit Game</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <h2>Edit Game</h2>
+  <form th:action="@{/admin/edit/{id}(id=${game.gameId})}" th:object="${game}" method="post">
+    <input type="hidden" th:field="*{gameId}"/>
+    <div class="form-group">
+      <label for="gameName">Tên</label>
+      <input type="text" class="form-control" id="gameName" th:field="*{name}" required>
+    </div>
+    <div class="form-group">
+      <label for="gameDescription">Mô tả</label>
+      <textarea class="form-control" id="gameDescription" th:field="*{description}" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="gameCategory">Thể loại</label>
+      <input type="text" class="form-control" id="gameCategory" th:field="*{genre}" required>
+    </div>
+    <div class="form-group">
+      <label for="gamePlatform">Nền tảng</label>
+      <input type="text" class="form-control" id="gamePlatform" th:field="*{platform}" required>
+    </div>
+    <div class="form-group">
+      <label for="gameReleaseDate">Ngày ra mắt</label>
+      <input type="date" class="form-control" id="gameReleaseDate" th:field="*{releaseDate}" required>
+    </div>
+    <div class="form-group">
+      <label for="gameDeveloper">Nhà phát triển</label>
+      <input type="text" class="form-control" id="gameDeveloper" th:field="*{developer}" required>
+    </div>
+    <div class="form-group">
+      <label for="gameImage">Ảnh (URL)</label>
+      <input type="url" class="form-control" id="gameImage" th:field="*{image}" required>
+    </div>
+    <div class="form-group">
+      <label for="gameVideo">Video (URL)</label>
+      <input type="url" class="form-control" id="gameVideo" th:field="*{video}">
+    </div>
+    <div class="form-group">
+      <label for="gameStatus">Trạng thái</label>
+      <select class="form-control" id="gameStatus" th:field="*{status}">
+        <option value="1">Hoạt động</option>
+        <option value="0">Không hoạt động</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a th:href="@{/admin}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

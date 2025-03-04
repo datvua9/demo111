@@ -1,0 +1,192 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-left: 500px;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.table-image {
+     max-width: 100px;
+     max-height: 100px;
+ }
+/* Tăng chiều rộng cột Mô tả */
+.description-col {
+    width: 300px; /* Điều chỉnh chiều rộng theo ý muốn */
+}
+
+/* Cắt ngắn nội dung mô tả */
+.description-text {
+    max-height: 4.5em; /* Hiển thị khoảng 3 dòng (tùy font-size) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Giới hạn 3 dòng */
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+
+/* Khi mở rộng, bỏ giới hạn chiều cao */
+.description-text.expanded {
+    max-height: none;
+    -webkit-line-clamp: unset;
+}
+
+/* Nút Xem thêm */
+.read-more-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+}
+/*nav*//* Thanh điều hướng bên trái */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 100%;
+    background-color: #343a40;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: width 0.3s ease; /* Hiệu ứng chuyển đổi mượt */
+    overflow: hidden; /* Ẩn nội dung tràn khi thu gọn */
+}
+
+/* Mở rộng khi hover */
+.sidebar:hover {
+    width: 150px;
+}
+
+/* Các liên kết trong nav */
+.nav-link {
+    color: #ffffff;
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    white-space: nowrap; /* Ngăn chữ xuống dòng */
+}
+
+.nav-link:hover {
+    background-color: #495057;
+    color: #ffffff;
+}
+
+/* Biểu tượng */
+.nav-link i {
+    margin-right: 10px;
+    width: 20px; /* Đảm bảo biểu tượng cố định */
+}
+
+/* Văn bản trong nav */
+.nav-text {
+    display: inline; /* Hiển thị khi mở rộng */
+}
+
+/* Form đăng xuất */
+.logout-form {
+    margin: 0;
+    padding: 0;
+}
+
+/* Nút Logout */
+.logout-btn {
+    width: 100%;
+    background-color: #dc3545;
+    border: none;
+    padding: 15px 20px;
+    font-size: 18px;
+    color: #ffffff;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+/* Đẩy nội dung chính sang phải */
+.content {
+    margin-left: 60px; /* Khoảng cách khi sidebar thu gọn */
+    transition: margin-left 0.3s ease; /* Hiệu ứng mượt */
+}
+
+/* Khi sidebar mở rộng, đẩy content sang phải thêm */
+.sidebar:hover ~ .content {
+    margin-left: 200px;
+}

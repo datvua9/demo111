@@ -11,7 +11,9 @@ body {
     background-color: #423a49;
     color: #ffffff;
 }
-
+span,strong{
+    font-size: 16pt;
+}
 .top-nav {
     width: 100%;
     height: 50px;
@@ -48,11 +50,28 @@ body {
 }
 
 /*nav*/
+.input {
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    padding: 1em;
+    background-color: #ccc;
+    box-shadow: inset 2px 5px 10px rgba(0,0,0,0.3);
+    transition: 300ms ease-in-out;
+}
+
+.input:focus {
+    background-color: white;
+    transform: scale(1.05);
+    box-shadow: 13px 13px 100px #969696,
+    -13px -13px 100px #ffffff;
+}
 nav {
     &.primary-navigation {
         margin: 0 auto;
         display: block;
-        padding: 0px 0 0 0;
+        padding: 0;
 
         font-size: 16px;
 
@@ -65,7 +84,7 @@ nav {
             position: relative;
             text-decoration: none;
             text-align: center;
-            font-family: arvo;
+            font-family: arvo, serif;
         }
 
         li a {
@@ -129,7 +148,7 @@ a {
 
 ul li ul li a { transition: all 0.5s ease; }
 
-/*endNAv*/
+/*sidebar*/
 .sidebar {
     width: 200px;
     height: 100vh;
@@ -174,7 +193,7 @@ ul li ul li a { transition: all 0.5s ease; }
     transition: width 0.3s ease;
 }
 
-.input {
+input .search-input{
     width: 100%;
     height: 40px;
     padding: 0 1rem;
@@ -188,7 +207,7 @@ ul li ul li a { transition: all 0.5s ease; }
 }
 
 .input::placeholder {
-    color: #dbdbe4;
+    color: #5a5454;
 }
 
 .icon {
@@ -280,23 +299,18 @@ ul li ul li a { transition: all 0.5s ease; }
     flex-direction: column;
     gap: 10px;
 }
-
-
-
 .metascore-info h4 {
     margin: 0;
     font-size: 15px;
     color: #cad0ec;
     text-transform: uppercase;
 }
-
 .metascore-info h3 {
     margin: 5px 0;
     font-size: 20px;
     font-weight: bold;
     color: #ffffff;
 }
-
 .metascore-info p {
     margin: 0;
     font-size: 14px;
@@ -311,7 +325,6 @@ ul li ul li a { transition: all 0.5s ease; }
     border-radius: 8px;
     background-color: #7F6F8EFF;
 }
-
 .metascore-value {
     display: flex;
     justify-content: center;
@@ -324,6 +337,7 @@ ul li ul li a { transition: all 0.5s ease; }
     font-weight: bold;
     border-radius: 8px;
 }
+
 .progress-bar {
     width: 120%;
     height: 8px;
@@ -332,30 +346,25 @@ ul li ul li a { transition: all 0.5s ease; }
     overflow: hidden;
     margin-top: 10px;
 }
-
 .progress {
     height: 100%;
     display: flex;
 }
-
 .progress-green {
     height: 100%;
     background-color: green;
     width: 50%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
 }
-
 .progress-yellow {
     height: 100%;
     background-color: yellow;
     width: 30%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
 }
-
 .progress-red {
     height: 100%;
     background-color: red;
     width: 20%; /* Chiều rộng sẽ được cập nhật bởi JavaScript */
 }
-
 .score-container, .metascore-value {
     margin-top: 10px;
     text-align: center;
@@ -380,9 +389,20 @@ ul li ul li a { transition: all 0.5s ease; }
     margin: 20px 0; /* Khoảng cách trên và dưới */
 }
 
-.spaced-paragraph {
-    margin-top: 20px; /* Khoảng trống 20px ở đầu */
+.spaced-paragraph1 {
+    margin-top: 20px;
     text-indent: 30px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-size: 50px;
+}
+.spaced-paragraph2 {
+    margin-top: 20px;
+    text-indent: 30px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 7px;
 }
 /*list*/
 
@@ -412,6 +432,9 @@ ul li ul li a { transition: all 0.5s ease; }
     -ms-overflow-style: none;  /* Ẩn thanh cuộn trên Internet Explorer và Edge */
     scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }
+.games-container {
+    margin-bottom: 20px;
+}
 
 .game-card {
     width: 25%; /* Chiều rộng của mỗi card (4 cột) */
@@ -434,6 +457,9 @@ ul li ul li a { transition: all 0.5s ease; }
     padding: 10px;
     cursor: pointer;
 }
+.scroll-button:hover {
+    background-color: #0056b3;
+}
 
 .next-button {
     right: 0;
@@ -443,14 +469,43 @@ ul li ul li a { transition: all 0.5s ease; }
 }
 
 .game-card img {
-    width: 100%; /* Chiều rộng lấp đầy vùng chứa */
-    height: auto; /* Chiều cao tự động điều chỉnh */
-    border-radius: 10px; /* Bo tròn góc trên bên trái */
+    width: 280px;
+    height: 350px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.news-card img {
+    width: 350px;
+    height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin: 20px;
+}
+.news-list-container {
+    display: flex;
+    transition: transform 0.3s ease; /* Tạo hiệu ứng cuộn mượt mà */
+    scroll-behavior: smooth;
+    overflow-x: auto; /* Cho phép cuộn ngang */
+    padding-bottom: 17px; /* Thêm padding để tạo không gian cho thanh cuộn */
+    margin-right: -17px; /* Ẩn thanh cuộn */
+    scroll-behavior: smooth;
+    margin-left: 20px;
+}
+/* Ẩn thanh cuộn cho tất cả các trình duyệt */
+.news-list-container::-webkit-scrollbar {
+    display: none; /* Ẩn thanh cuộn trên Chrome, Safari và Edge */
+}
+
+.news-list-container {
+    -ms-overflow-style: none;  /* Ẩn thanh cuộn trên Internet Explorer và Edge */
+    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }
 
 .game-title{
     align-items: center;
     border-radius: 10px;
+    margin-top: 10px;
+    font-size: 16px;
 }
 .game-info {
     text-align: center; /* Căn giữa chữ trong game-info */
@@ -468,31 +523,39 @@ ul li ul li a { transition: all 0.5s ease; }
     width: 80%;
     margin: 0 auto;
     padding: 20px;
-    background: #FFFFFF;
-    box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+    background: #70518a;
+    box-shadow: 0 187px 75px rgba(0, 0, 0, 0.01), 0 105px 63px rgba(0, 0, 0, 0.05), 0 47px 47px rgba(0, 0, 0, 0.09), 0 12px 26px rgba(0, 0, 0, 0.1), 0 0 0 rgba(0, 0, 0, 0.1);
     border-radius: 13px;
+}
+/*genreSelect*/
+
+
+.popup-header{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 0;
+    width: 80%;
+    margin: 0 auto;
 }
 
 .RateName {
     align-self: flex-start;
-    color: #000000;
+    color: #ffffff;
     margin-bottom: 10px;
 }
 
-.rating {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+
+
 
 .ReviewTitle {
     align-self: flex-start;
-    color: #000000;
+    color: #ffffff;
     margin-bottom: 10px;
 }
 
-.form {
+.review-form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -500,7 +563,7 @@ ul li ul li a { transition: all 0.5s ease; }
     gap: 10px;
 }
 
-.input_field {
+.review-input_field {
     resize: none;
     width: 100%;
     height: 100px;
@@ -512,21 +575,19 @@ ul li ul li a { transition: all 0.5s ease; }
     transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
 }
 
-.input_field:focus {
+.review-input_field:focus {
     border: 1px solid transparent;
-    box-shadow: 0px 0px 0px 1px #2B2B2F;
-    background-color: transparent;
+    box-shadow: 0 0 0 1px #2B2B2F;
 }
 
-.submit {
+.review-submit {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px 18px;
     width: 100%;
     height: 42px;
-    background: linear-gradient(180deg, #4480FF 0%, #115DFC 50%, #0550ED 100%);
-    box-shadow: 0px 0.5px 0.5px #EFEFEF, 0px 1px 0.5px rgba(239, 239, 239, 0.5);
+    background: linear-gradient(180deg, #c144ff 0%, #b911fc 50%, #6d05ed 100%);
     border-radius: 5px;
     border: 0;
     font-style: normal;
@@ -538,78 +599,8 @@ ul li ul li a { transition: all 0.5s ease; }
 }
 /*rate*/
 /* From Uiverse.io by aguerquin */
-.rating > label {
-    margin-right: 4px;
-}
 
-.rating:not(:checked) > input {
-    display: none;
-}
 
-.rating:not(:checked) > label {
-    float: right;
-    cursor: pointer;
-    font-size: 30px;
-}
-
-.rating:not(:checked) > label > svg {
-    fill: #666;
-    transition: fill 0.3s ease;
-}
-
-.rating > input:checked ~ label > svg {
-    fill: #ffa723;
-}
-
-.rating:not(:checked) > label:hover ~ label > svg,
-.rating:not(:checked) > label:hover > svg {
-    fill: #ff9e0b;
-}
-
-#star1:hover ~ label > svg,
-#star1:hover > svg {
-    fill: #a23c3c !important;
-}
-
-#star2:hover ~ label > svg,
-#star2:hover > svg {
-    fill: #99542d !important;
-}
-
-#star3:hover ~ label > svg,
-#star3:hover > svg {
-    fill: #9f7e18 !important;
-}
-
-#star4:hover ~ label > svg,
-#star4:hover > svg {
-    fill: #22885e !important;
-}
-
-#star5:hover ~ label > svg,
-#star5:hover > svg {
-    fill: #7951ac !important;
-}
-
-#star1:checked ~ label > svg {
-    fill: #ef4444;
-}
-
-#star2:checked ~ label > svg {
-    fill: #e06c2b;
-}
-
-#star3:checked ~ label > svg {
-    fill: #eab308;
-}
-
-#star4:checked ~ label > svg {
-    fill: #19c37d;
-}
-
-#star5:checked ~ label > svg {
-    fill: #ab68ff;
-}
 
 
 .review-container {
@@ -663,6 +654,9 @@ ul li ul li a { transition: all 0.5s ease; }
 .review-content {
     margin-bottom: 10px;
 }
+.review-content p {
+    margin: 0;
+}
 
 .read-more {
     color: #007bff;
@@ -685,4 +679,189 @@ ul li ul li a { transition: all 0.5s ease; }
 .report {
     color: #007bff;
     text-decoration: none;
+}
+
+/* Thiết lập chung */
+
+.showcase {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Định dạng chung */
+.rating h2 {
+    width: 100px;
+    text-align: right;
+    margin: 10px;
+    color: #ffffff;
+}
+
+.rating-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    gap: 15px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: auto;
+    max-width: 500px;
+}
+
+/* Hệ thống đánh giá sao */
+.rating-system2 {
+    display: flex;
+    flex-direction: row-reverse; /* Đảo ngược thứ tự sao */
+    justify-content: center;
+    gap: 5px;
+    position: relative;
+}
+
+/* Ẩn radio button */
+.rating-system2 input[type="radio"] {
+    display: none;
+}
+
+/* Kiểu mặc định cho sao */
+.rating-system2 label {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: lightgray;
+    cursor: pointer;
+    display: inline-block;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.rating-system2 label:hover,
+.rating-system2 label:hover ~ label {
+    background-color: gold;
+}
+
+.rating-system2 input[type="radio"]:checked ~ label {
+    background-color: lightgray;
+}
+
+.rating-system2 input[type="radio"]:checked + label,
+.rating-system2 input[type="radio"]:checked + label ~ label {
+    background-color: gold;
+}
+
+
+
+
+.box select {
+    font-family: Georgia, Serif;
+    background-color: #b911fc;
+    color: white;
+    padding: 12px;
+    width: 250px;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    -webkit-appearance: button;
+    outline: none;
+}
+
+.box::before {
+    font-family: Georgia, Serif;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    height: 100%;
+    text-align: center;
+    font-size: 28px;
+    line-height: 45px;
+    color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+.box:hover::before {
+    color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.box select option {
+    padding: 30px;
+}
+
+
+/*news*/
+.news_content{
+    margin-left: 200px;
+    margin-right: 20px;
+    padding: 20px;
+
+    margin-top: 70px;
+}
+.news_img{
+    justify-content: center;
+    max-width: 800px;
+    width: 200%;
+    max-height: 400px;
+    height: auto;
+}
+.news-detail{
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+.header h2 {
+    margin-bottom: 10px;
+}
+
+/*News*/
+
+.news_title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+.news_detail h1 {
+    color: #ffffff;
+    font-size: 34px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.news_image {
+    display: block;
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    margin-left: 300px;
+}
+.news_paragraph {
+    text-indent: 30px;
+    margin-bottom: 15px;
+}
+.news_content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #ffffff;
+    text-align: justify;
+}
+
+.news_content p {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .news_container {
+        width: 90%;
+        padding: 15px;
+    }
 }

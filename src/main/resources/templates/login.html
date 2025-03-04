@@ -21,9 +21,13 @@
             <button class="btn" type="submit">Login</button>
             <div class="acc-text">
                 New here ?
-                <span style="color : #0000ff; cursor : pointer;">Create Account</span>
+                <a th:href="@{/signup}">
+                    <span style="color : #0000ff; cursor : pointer;">Create Account</span>
+                </a>
             </div>
         </div>
+        <div th:if="${param.error}" style="color: red;">Invalid username or password</div>
+        <div th:if="${param.logout}" style="color: green;">Logged out successfully</div>
     </form>
 </div>
 </body>

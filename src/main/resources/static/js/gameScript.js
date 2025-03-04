@@ -1,16 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Hàm chung để cập nhật màu nền dựa trên điểm số
     const updateColor = (element, score) => {
-        if (score >= 0 && score < 35) {
+        if (score >= 0 && score < 3.5) {
             element.style.backgroundColor = 'red';
-        } else if (score >= 35 && score < 70) {
+        } else if (score >= 3.5 && score < 7) {
             element.style.backgroundColor = '#D5D500FF';
-        } else if (score >= 70 && score <= 100) {
+        } else if (score >= 7 && score <= 10) {
             element.style.backgroundColor = 'green';
         }
     };
 
-    // Xử lý cuộn danh sách game
     const gameContainers = document.querySelectorAll('.games-list');
 
     gameContainers.forEach(container => {
@@ -29,16 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
         nextButton.addEventListener('click', () => {
             const maxScroll = gamesListContainer.scrollWidth - gamesListContainer.offsetWidth;
             scrollAmount = Math.min(scrollAmount + cardWidth, maxScroll);
-            gamesListContainer.scrollLeft = scrollAmount;  // Sử dụng scrollLeft
+            gamesListContainer.scrollLeft = scrollAmount;
         });
-
         preButton.addEventListener('click', () => {
             scrollAmount = Math.max(scrollAmount - cardWidth, 0);
-            gamesListContainer.scrollLeft = scrollAmount;  // Sử dụng scrollLeft
+            gamesListContainer.scrollLeft = scrollAmount;
         });
     });
 
-    // Xử lý màu nền cho các card điểm số
     const processCards = (selector, scoreSelector) => {
         document.querySelectorAll(selector).forEach(card => {
             const scoreElement = card.querySelector(scoreSelector);

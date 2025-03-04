@@ -1,33 +1,98 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Games;
-import com.example.demo.model.User_Reviews;
-import com.example.demo.repository.GamesRepository;
-import com.example.demo.repository.User_ReviewsRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.dto.GameDTO;
+import com.example.demo.dto.ReviewDTO;
+import com.example.demo.implementation.ReviewServiceImpl;
+import com.example.demo.model.Reviews;
+import com.example.demo.model.User;
+import com.example.demo.service.GameService;
+import com.example.demo.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Controller
 public class ReviewController {
+    private ReviewServiceImpl reviewService;
+    private GameService gameService;
+    private UserService userService;
 
-    @Autowired
-    private User_ReviewsRepository reviewRepository;
+    public ReviewController(ReviewServiceImpl reviewService, GameService gameService,UserService userService) {
+        this.reviewService = reviewService;
+        this.gameService = gameService;
+        this.userService = userService;
+    }
 
-    @Autowired
-    private GamesRepository gameRepository; // Need a GamesRepository
+    @PostMapping("/submitReview")
+    public ModelAndView submitReview(@RequestParam Long gameId,
+                                     @RequestParam("gameplay_rating") int gameplayRating,
+                                     @RequestParam("music_rating") int musicRating,
+                                     @RequestParam("graphics_rating") int graphicsRating,
+                                     @RequestParam("story_rating") int storyRating,
+                                     @RequestParam("platform") String platform,
+                                     @RequestParam("comment") String comment) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-    @GetMapping("/reviews/{gameId}") // Path with gameId
-    public String showReviews(@PathVariable Long gameId, Model model) {
-        Games game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("Game not found"));
-        List<User_Reviews> reviews = reviewRepository.findByGame(game);
-        model.addAttribute("reviews", reviews);
-        model.addAttribute("game", game); // Add the game to the model
-        return "reviews"; // Return the name of the review template
+        User user = userService.getCurrentUser();
+        GameDTO game = gameService.getGameById(gameId);
+
+        if (user == null || game == null) {
+            ModelAndView mav = new ModelAndView("login");
+            mav.addObject("errorMessage", "Không tìm thấy người dùng hoặc game.");
+            return mav;
+        }
+
+        ReviewDTO reviewDTO = new ReviewDTO(gameId, gameplayRating, musicRating, graphicsRating, storyRating, comment, platform, user.getUser_id(), LocalDate.now());
+        Reviews review = reviewDTO.convertToReview(user);
+
+        reviewService.saveReview(review);
+
+        return new ModelAndView("redirect:/game/" + gameId);
+    }
+
+    @GetMapping("/review/edit/{id}")
+    public String editReview(@PathVariable Long id, Model model) {
+        Optional<Reviews> reviewOptional = reviewService.findById(id);
+        if (reviewOptional.isPresent()) {
+            Reviews review = reviewOptional.get();
+            model.addAttribute("review", review);
+            return "review/edit";
+        } else {
+            return "error/404";
+        }
+    }
+
+    @PostMapping("/review/update")
+    public String updateReview(@ModelAttribute Reviews review) {
+        reviewService.saveReview(review);
+        return "redirect:/game/" + review.getGameId();
+    }
+
+    @GetMapping("/reviewForm")
+    public String showReviewForm(@RequestParam("gameId") Long gameId, Model model) {
+        User user = userService.getCurrentUser();
+        GameDTO game = gameService.getGameById(gameId);
+
+        if (user == null || game == null) {
+            return "error/404";
+        }
+        Reviews existingReview = reviewService.getReviewByUserAndGameId(user, gameId);
+        Reviews review;
+        if (existingReview != null) {
+            review = existingReview;
+        } else {
+            review = new Reviews();
+            review.setGameId(game.getGameId());
+        }
+        model.addAttribute("review", review);
+        model.addAttribute("gameId", gameId);
+        return "reviewForm";
     }
 }

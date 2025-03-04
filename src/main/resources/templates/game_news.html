@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${news.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+    <link href="https://vjs.zencdn.net/5.10.4/video-js.css" rel="stylesheet">
+</head>
+<body>
+<div th:insert="navbar::navbar"></div>
+<div class="content">
+    <div class="news_container">
+        <div class="news_detail">
+            <h1 th:text="${news.title}" class="news_title"></h1>
+        </div>
+        <img th:src="${news.image}" alt="News Image" class="news_image" />
+        <div class="news_content">
+            <div th:each="para : ${paragraphs}" class="news_paragraph">
+                <p th:text="${para}"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup">
+        <form class="review-form" th:action="@{/submitComment}" th:method="post">
+            <div class="popup-header">
+                <div class="popup-header-text">
+                    <h1 class="RateName" th:block sec:authorize="isAuthenticated()">
+                        <span th:text="${#authentication.name}"></span>
+                    </h1>
+                </div>
+            </div>
+            <input type="hidden" name="newsId" th:value="${news.newsId}" />
+            <textarea placeholder="Enter your comment" name="commentText" class="review-input_field"></textarea>
+            <button type="submit" class="review-submit">Submit</button>
+        </form>
+    </div>
+    <div class="review-container">
+        <div th:each="comment : ${comment}" class="review-card">
+            <div class="review-header">
+                <div class="review-info">
+                    <span class="review-author" th:text="${comment.user.username}"></span>
+                    <span class="review-date" th:text="${comment.comment_date}"></span>
+                </div>
+            </div>
+            <div class="review-content">
+                <p th:text="${comment.comment}"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <hr class="divider">
+    <div class="games-container">
+        <div class="header">
+            <h2>Related News</h2>
+        </div>
+        <div class="games-list">
+            <div class="news-list-container">
+                <div class="news-card" th:each="news : ${news}">
+                    <a th:href="@{/news/{id}(id=${news.newsId})}">
+                        <img th:src="${news.image}" th:alt="${news.title}">
+                    </a>
+                    <div class="games-info">
+                        <h3 class="game-title" th:text="${news.title}">Game Name</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+
+<script th:src="@{/js/gameScript.js}"></script>
+
+<script src="https://vjs.zencdn.net/5.10.4/video.js"></script>
+
+
+</body>
+</html>
