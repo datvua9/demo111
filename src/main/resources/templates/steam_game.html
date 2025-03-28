@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${game.name} ?: 'Steam Game'"></title>
+    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+</head>
+<body>
+<div th:insert="navbar::navbar"></div>
+<div class="content">
+    <div class="container">
+        <div class="video-section">
+            <div class="video">
+                <div th:if="${game.video != null}">
+                    <video width="100%" height="315" controls>
+                        <source th:src="${game.video}" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div th:unless="${game.video != null}">
+                    <p>Không có video</p>
+                </div>
+            </div>
+            <!-- Steam API không cung cấp điểm đánh giá chi tiết, nên tạm bỏ rate-container hoặc dùng giá trị mặc định -->
+            <div class="rate-container">
+                <div class="rate-grid">
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Gameplay</h3>
+                            <p>Not available from Steam</p>
+                        </div>
+                        <div class="rate-value" id="gameplay-rate">N/A</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Music</h3>
+                            <p>Not available from Steam</p>
+                        </div>
+                        <div class="rate-value" id="music-rate">N/A</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Graphic</h3>
+                            <p>Not available from Steam</p>
+                        </div>
+                        <div class="rate-value" id="graphic-rate">N/A</div>
+                    </div>
+                    <div class="rate-card">
+                        <div class="rate-info">
+                            <h3>Story</h3>
+                            <p>Not available from Steam</p>
+                        </div>
+                        <div class="rate-value" id="story-rate">N/A</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="metascore-section">
+            <div class="metascore-container">
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>Metascore</h4>
+                        <h3>Not Available</h3>
+                        <p>Steam API Data</p>
+                    </div>
+                    <div class="metascore-value">N/A</div>
+                </div>
+                <div class="metascore-card">
+                    <div class="metascore-info">
+                        <h4>Userscore</h4>
+                        <h3>Not Available</h3>
+                        <p>Steam API Data</p>
+                    </div>
+                    <div class="metascore-value">N/A</div>
+                </div>
+            </div>
+            <div class="video-info">
+                <h1 th:text="${game.name} ?: 'Game Title'">Game Title</h1>
+                <p class="spaced-paragraph"><strong>Tags:</strong> <span th:text="${game.genre} ?: 'N/A'"></span></p>
+                <p class="spaced-paragraph"><strong>Developer:</strong> <span th:text="${game.developer} ?: 'N/A'"></span></p>
+                <p class="spaced-paragraph"><strong>Release Date:</strong> <span th:text="${#dates.format(game.releaseDate, 'dd MMM yyyy')} ?: 'N/A'"></span></p>
+            </div>
+        </div>
+    </div>
+    <hr class="divider">
+    <div class="game-detail">
+        <h1>Game Detail</h1>
+        <p class="spaced-paragraph" th:utext="${game.description} ?: 'No description available.'">Game description goes here.</p>
+    </div>
+    <hr class="divider">
+    <div class="game-detail">
+        <h1>Image</h1>
+        <div th:if="${game.image != null}">
+            <img th:src="${game.image}" alt="Game Header Image" style="max-width: 100%; height: auto;" />
+        </div>
+        <div th:unless="${game.image != null}">
+            <p>No image available.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Không bao gồm review hoặc related games vì Steam API không cung cấp -->
+<script th:src="@{/js/gameScript.js}"></script>
+</body>
+</html>

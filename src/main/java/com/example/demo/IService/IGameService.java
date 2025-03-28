@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.IService;
 
 import com.example.demo.dto.GameDTO;
 import org.springframework.data.domain.Page;
@@ -16,5 +16,5 @@ public interface IGameService {
     List<GameDTO> getCommingGames();
     GameDTO createGame(GameDTO gameDTO);
     GameDTO updateGame(Long id, GameDTO gameDTO);
-    void deleteGame(Long id);
+    boolean deleteGame(Long id);
 }

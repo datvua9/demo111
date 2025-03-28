@@ -29,6 +29,7 @@ public class AdminNewsController {
         model.addAttribute("totalPages", newsPage.getTotalPages());
         return "admin_news";
     }
+
     @PostMapping("/add")
     public String addNews(@ModelAttribute NewsDTO newsDTO) {
         newsService.createNews(newsDTO);

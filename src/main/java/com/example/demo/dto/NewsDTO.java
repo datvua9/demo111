@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.Games;
+import com.example.demo.model.News;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,5 +22,12 @@ public class NewsDTO {
         this.title = title;
         this.content = content;
         this.image = image;
+    }
+    public void convertToEntity(News news) {
+          this.newsId = news.getNewsId();
+          this.title = news.getTitle();
+          this.content = news.getContent();
+          this.image = news.getImage();
+          this.created_at = news.getCreatedAt();
     }
 }

@@ -18,25 +18,12 @@ public class ReviewDTO {
     private String comment;
     private String platform;
     private LocalDate reviewDate;
-    private String username; // Thêm trường username
-    private String gameName; // Thêm trường gameName
+    private String username;
+    private String gameName;
 
     public ReviewDTO() {}
 
     public ReviewDTO(Long gameId, int gameplay_rating, int music_rating, int graphic_rating, int story_rating, String comment, String platform, Long userId, LocalDate reviewDate) {
-        this.gameId = gameId;
-        this.gameplay_rating = gameplay_rating;
-        this.music_rating = music_rating;
-        this.graphic_rating = graphic_rating;
-        this.story_rating = story_rating;
-        this.comment = comment;
-        this.platform = platform;
-        this.userId = userId;
-        this.reviewDate = reviewDate;
-    }
-
-    public ReviewDTO(Long review_id, Long gameId, int gameplay_rating, int music_rating, int graphic_rating, int story_rating, String comment, String platform, Long userId, LocalDate reviewDate) {
-        this.review_id = review_id;
         this.gameId = gameId;
         this.gameplay_rating = gameplay_rating;
         this.music_rating = music_rating;
@@ -61,21 +48,6 @@ public class ReviewDTO {
         review.setPlatform(this.platform);
         review.setReviewDate(this.reviewDate);
         return review;
-    }
-
-    // Sửa convertToEntity để nhận Reviews
-    public void convertToEntity(Reviews reviews) {
-        this.review_id = reviews.getReview_id();
-        this.userId = reviews.getUser() != null ? reviews.getUser().getUser_id() : null;
-        this.username = reviews.getUser() != null ? reviews.getUser().getUsername() : "Unknown";
-        this.gameId = reviews.getGameId();
-        this.gameplay_rating = reviews.getGameplay_rating();
-        this.music_rating = reviews.getMusic_rating();
-        this.graphic_rating = reviews.getGraphic_rating();
-        this.story_rating = reviews.getStory_rating();
-        this.comment = reviews.getComment();
-        this.platform = reviews.getPlatform();
-        this.reviewDate = reviews.getReviewDate();
     }
 
     public float getRating() {

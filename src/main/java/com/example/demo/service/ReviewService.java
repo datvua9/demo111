@@ -22,12 +22,6 @@ public class ReviewService {
     @Autowired
     private ReviewsRepository reviewsRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GameService gameService;
-
     @PostConstruct
     public void checkReviews() {
         List<Reviews> reviews = reviewsRepository.findAll();
@@ -41,38 +35,8 @@ public class ReviewService {
         return reviewDTOPage;
     }
 
-    public void saveReview(Reviews review) {
-        reviewsRepository.save(review);
-    }
-
-    public List<Reviews> findByGameId(Long gameId) {
-        return reviewsRepository.findByGameId(gameId);
-    }
-
     public Optional<Reviews> findById(Long reviewId) {
         return reviewsRepository.findById(reviewId);
-    }
-
-    public void saveOrUpdateReview(Reviews review) {
-        Optional<Reviews> existingReview = reviewsRepository.findByUserAndGameId(review.getUser(), review.getGameId());
-        if (existingReview.isPresent()) {
-            Reviews updatedReview = existingReview.get();
-            updatedReview.setMusic_rating(review.getMusic_rating());
-            updatedReview.setGameplay_rating(review.getGameplay_rating());
-            updatedReview.setStory_rating(review.getStory_rating());
-            updatedReview.setGraphic_rating(review.getGraphic_rating());
-            updatedReview.setComment(review.getComment());
-            updatedReview.setPlatform(review.getPlatform());
-            updatedReview.setReviewDate(LocalDate.now());
-            reviewsRepository.save(updatedReview);
-            return;
-        }
-        review.setReviewDate(LocalDate.now());
-        reviewsRepository.save(review);
-    }
-
-    public Reviews getReviewByUserAndGameId(User user, Long gameId) {
-        return reviewsRepository.findByUserAndGameId(user, gameId).orElse(null);
     }
 
     public void deleteReview(Long reviewId) {

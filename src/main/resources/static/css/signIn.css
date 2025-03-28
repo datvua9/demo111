@@ -42,9 +42,9 @@ body {
     text-transform: uppercase;
     letter-spacing: 3px;
     border-radius: 10px;
-    border: solid 1px #1034aa;
+    border: solid 1px #4810aa;
     border-bottom: solid 1px #90c2ff;
-    background: linear-gradient(135deg, #0034de, #006eff);
+    background: linear-gradient(135deg, #5900de, #7b00ff);
     color: #fff;
     font-weight: bolder;
     transition: all 0.2s ease;
@@ -63,7 +63,7 @@ body {
 
 .input-field label {
     position: absolute;
-    color: #8d8d8d;
+    color: #000000;
     pointer-events: none;
     background-color: transparent;
     left: 15px;
@@ -83,7 +83,7 @@ body {
 .input-field input:focus,
 .input-field input:valid {
     outline: none;
-    border: solid 1px #0034de;
+    border: solid 1px #5100de;
 }
 
 .input-field input:focus ~ label,
@@ -91,7 +91,7 @@ body {
     transform: translateY(-51%) translateX(-10px) scale(0.8);
     background-color: #fff;
     padding: 0px 5px;
-    color: #0034de;
+    color: #6b00de;
     font-weight: bold;
     letter-spacing: 1px;
     border: none;

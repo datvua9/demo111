@@ -1,15 +1,12 @@
 package com.example.demo.controller;
 
+import com.example.demo.IService.IGameService;
 import com.example.demo.dto.GameDTO;
-import com.example.demo.implementation.GameRestImple;
 import com.example.demo.implementation.GameViewImple;
 import com.example.demo.model.Reviews;
 import com.example.demo.service.GameService;
+import com.example.demo.service.SteamApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +17,15 @@ import java.util.List;
 @RequestMapping("/game")
 public class GameController {
     private final GameViewImple gameViewImple;
-    private final GameRestImple gameRestImple;
-    private final GameService gameService;
+    private final IGameService gameService;
 
     @Autowired
-    public GameController(GameViewImple gameViewImple, GameRestImple gameRestImple, GameService gameService) {
-        this.gameViewImple = gameViewImple;
-        this.gameRestImple = gameRestImple;
-        this.gameService = gameService;
-    }
+    private SteamApiService steamApiService;
 
-    @GetMapping("/home")
-    public String gameHome(Model model) {
-        model.addAttribute("games", gameViewImple.getAllGames());
-        return "game_home";
+    @Autowired
+    public GameController(GameViewImple gameViewImple, GameService gameService) {
+        this.gameViewImple = gameViewImple;
+        this.gameService = gameService;
     }
 
     @GetMapping("/{id}")
@@ -52,27 +44,18 @@ public class GameController {
             model.addAttribute("overallAverage", gameViewImple.calculateOverallAverage(reviews));
             return "game_home";
         } else {
-            return "error/404";
+            return "404";
         }
     }
 
-    @GetMapping("/api/all")
-    public ResponseEntity<List<GameDTO>> getAllGames() {
-        return gameRestImple.getAllGames();
-    }
-
-    @PostMapping("/api/add")
-    public ResponseEntity<GameDTO> createGame(@RequestBody GameDTO gameDTO) {
-        return gameRestImple.createGame(gameDTO);
-    }
-
-    @PutMapping("/api/update/{id}")
-    public ResponseEntity<GameDTO> updateGame(@PathVariable Long id, @RequestBody GameDTO gameDTO) {
-        return gameRestImple.updateGame(id, gameDTO);
-    }
-
-    @DeleteMapping("/api/delete/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
-        return gameRestImple.deleteGame(id);
+    @GetMapping("/steam/{appId}")
+    public String steamGameDetails(@PathVariable Long appId, Model model) {
+        GameDTO game = steamApiService.getGameData(appId);
+        if (game != null && game.getName() != null) {
+            model.addAttribute("game", game);
+            return "steam_game";
+        } else {
+            return "404";
+        }
     }
 }

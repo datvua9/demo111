@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Account</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Edit Profile</h2>
+    <form th:action="@{/profile/save}" method="post" enctype="multipart/form-data">
+        <div class="row profile-container">
+            <div class="col-md-5 profile-left">
+                <div class="form-group">
+                    <label for="avatar">Profile Picture</label>
+                    <div th:if="${userProfileDTO.avatar}">
+
+                        <img th:src="@{${userProfileDTO.avatar}}" alt="Current Avatar" style="max-width: 200px; margin-top: 10px;">
+                    </div>
+                    <div id="avatarPreview" style="display: none; margin-top: 10px;">
+                        <p>New Avatar:</p>
+                        <img id="previewImg" alt="Preview Avatar" style="max-width: 200px;">
+                    </div>
+                    <input type="file" class="form-control-file mt-2" id="avatar" name="avatar" accept=".png, .jpg, .jpeg" onchange="previewImage(event)">
+                </div>
+
+                <h5 class="mt-3">Name</h5>
+                <input type="text" class="form-control" id="name" th:value="${userDTO.username}" name="username" required>
+
+                <h5 class="mt-3">Gender</h5>
+                <select class="form-control" id="gender" name="gender">
+                    <option value="male" th:selected="${userProfileDTO.gender == 'male'}">Male</option>
+                    <option value="female" th:selected="${userProfileDTO.gender == 'female'}">Female</option>
+                    <option value="other" th:selected="${userProfileDTO.gender == 'other'}">Other</option>
+                </select>
+
+                <h5 class="mt-3">Date of Birth</h5>
+                <input type="date" class="form-control" id="dob" th:value="${userProfileDTO.birthdate != null ? userProfileDTO.birthdate.toString().substring(0,10) : ''}" name="birthdate" required>
+            </div>
+
+            <div class="col-md-7">
+                <h4>Email</h4>
+                <input type="email" class="form-control" id="email" th:value="${userDTO.email}" name="email" required>
+
+                <h4 class="mt-3">Interests</h4>
+                <input type="text" class="form-control" id="interests" th:value="${userProfileDTO.hobbies}" name="hobbies" placeholder="e.g., Gaming, Music, Coding">
+
+                <h4 class="mt-3">Bio</h4>
+                <textarea class="form-control" id="bio" rows="2" name="bio" th:text="${userProfileDTO.bio}" placeholder="Tell something about yourself..."></textarea>
+
+                <h4 class="mt-3">New Password</h4>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" autocomplete="new-password">
+                    <button type="button" class="btn btn-outline-secondary" id="toggleNewPassword">Show</button>
+                </div>
+
+                <h4 class="mt-3">Retype your new Password</h4>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="RetypeNewPassword" name="retypeNewPassword" placeholder="Enter new password" autocomplete="new-password">
+                    <button type="button" class="btn btn-outline-secondary" id="toggleRetypePassword">Show</button>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/home" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('avatarPreview');
+        const previewImg = document.getElementById('previewImg');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    }
+
+    document.getElementById('toggleNewPassword').addEventListener('click', function() {
+        var input = document.getElementById('newPassword');
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.textContent = 'Hide';
+        } else {
+            input.type = 'password';
+            this.textContent = 'Show';
+        }
+    });
+
+    document.getElementById('toggleRetypePassword').addEventListener('click', function() {
+        var input = document.getElementById('RetypeNewPassword');
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.textContent = 'Hide';
+        } else {
+            input.type = 'password';
+            this.textContent = 'Show';
+        }
+    });
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@ package com.example.demo.implementation;
 import com.example.demo.model.Reviews;
 import com.example.demo.model.User;
 import com.example.demo.repository.ReviewsRepository;
-import com.example.demo.service.IReviewService;
+import com.example.demo.IService.IReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +28,9 @@ public class ReviewServiceImpl implements IReviewService {
     public void saveReview(Reviews review) {
         reviewsRepository.save(review);
     }
+
+    @Override
+    public void deleteReview(Reviews review) {reviewsRepository.delete(review);}
 
     @Override
     public List<Reviews> findByGameId(Long gameId) {

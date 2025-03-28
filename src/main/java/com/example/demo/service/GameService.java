@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.IService.IGameService;
+import com.example.demo.component.RatingCalculator;
 import com.example.demo.dto.GameDTO;
 import com.example.demo.model.Games;
 import com.example.demo.model.Reviews;
@@ -111,11 +113,14 @@ public class GameService implements IGameService {
 
     @Override
     public GameDTO updateGame(Long id, GameDTO gameDTO) {
-        if (gamesRepository.existsById(id)) {
-            Games game = new Games();
-            game.convertToDTO(gameDTO);
-            game.setGameId(id);
-            Games updatedGame = gamesRepository.save(game);
+        Games existingGame = gamesRepository.findById(id).orElse(null);
+
+        if (existingGame != null) {
+            List<Reviews> existingReviews = existingGame.getReviews();
+            existingGame.convertToDTO(gameDTO);
+            existingGame.setReviews(existingReviews);
+            Games updatedGame = gamesRepository.save(existingGame);
+
             GameDTO updatedDTO = new GameDTO();
             updatedDTO.convertToEntity(updatedGame);
             return updatedDTO;
@@ -124,7 +129,11 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void deleteGame(Long id) {
-        gamesRepository.deleteById(id);
+    public boolean deleteGame(Long id) {
+        if (gamesRepository.existsById(id)) {
+            gamesRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

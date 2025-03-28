@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="admin_navbar" class="sidebar" id="sidebar">
+    <nav class="nav flex-column">
+        <a class="nav-link" th:href="@{/admin}">
+            <i class="fas fa-gamepad"></i>
+            <span class="nav-text">Game</span>
+        </a>
+        <a class="nav-link" th:href="@{/admin/news}">
+            <i class="fas fa-newspaper"></i>
+            <span class="nav-text">News</span>
+        </a>
+        <a class="nav-link" th:href="@{/admin/reviews}">
+            <i class="fas fa-star"></i>
+            <span class="nav-text">Review</span>
+        </a>
+        <a class="nav-link" th:href="@{/admin/comments}">
+            <i class="fas fa-comment"></i>
+            <span class="nav-text">Comment</span>
+        </a>
+        <a class="nav-link" th:href="@{/admin/users}">
+            <i class="fas fa-user"></i>
+            <span class="nav-text">User</span>
+        </a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="nav-link logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
+            </button>
+        </form>
+    </nav>
+</div></body>
+</html>

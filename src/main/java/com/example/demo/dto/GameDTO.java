@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class GameDTO {
@@ -20,6 +21,8 @@ public class GameDTO {
     private String video;
     private int status;
     private float rating;
+    private List<ReviewDTO> reviews;
+
     public GameDTO() {}
 
     public GameDTO(Long gameId, String name, String image, String genre) {
@@ -27,6 +30,21 @@ public class GameDTO {
         this.name = name;
         this.image = image;
         this.genre = genre;
+    }
+
+    public Games toEntity() {
+        Games game = new Games();
+        game.setSteamAppId(this.gameId); // Gán steam_app_id từ gameId của DTO
+        game.setName(this.name);
+        game.setDescription(this.description);
+        game.setGenre(this.genre);
+        game.setPlatform(this.platform);
+        game.setReleaseDate(this.releaseDate);
+        game.setGameDeveloper(this.developer);
+        game.setImage(this.image);
+        game.setVideo(this.video);
+        game.setStatus(this.status);
+        return game;
     }
 
     public void convertToEntity(Games games) {
@@ -41,5 +59,4 @@ public class GameDTO {
         this.video = games.getVideo();
         this.status = games.getStatus();
     }
-
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.IService.IGameService;
 import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.ReviewDTO;
 import com.example.demo.implementation.ReviewServiceImpl;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @Controller
 public class ReviewController {
     private ReviewServiceImpl reviewService;
-    private GameService gameService;
+    private IGameService gameService;
     private UserService userService;
 
     public ReviewController(ReviewServiceImpl reviewService, GameService gameService,UserService userService) {
@@ -47,6 +48,10 @@ public class ReviewController {
             ModelAndView mav = new ModelAndView("login");
             mav.addObject("errorMessage", "Không tìm thấy người dùng hoặc game.");
             return mav;
+        }
+        Reviews existingReview = reviewService.getReviewByUserAndGameId(user, gameId);
+        if (existingReview != null) {
+            reviewService.deleteReview(existingReview);
         }
 
         ReviewDTO reviewDTO = new ReviewDTO(gameId, gameplayRating, musicRating, graphicsRating, storyRating, comment, platform, user.getUser_id(), LocalDate.now());

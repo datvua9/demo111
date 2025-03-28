@@ -17,6 +17,5 @@ import java.util.Optional;
 public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
     Page<Reviews> findAll(Pageable pageable);
     List<Reviews> findByGameId(Long gameId);
-
     Optional<Reviews> findByUserAndGameId(User user, Long gameId); // Sửa tên phương thức
 }

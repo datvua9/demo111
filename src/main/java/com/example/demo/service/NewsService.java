@@ -1,7 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.NewsDTO;
+import com.example.demo.model.Comment;
+import com.example.demo.model.Games;
 import com.example.demo.model.News;
+import com.example.demo.model.Reviews;
 import com.example.demo.repository.NewsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,11 +56,17 @@ public class NewsService {
     }
 
     public NewsDTO updateNews(Long id, NewsDTO newsDTO) {
-        if (newsRepository.existsById(id)) {
-            News news = convertToEntity(newsDTO);
-            news.setNewsId(id);
-            News updatedNews = newsRepository.save(news);
-            return convertToDTO(updatedNews);
+        News existingNews = newsRepository.findById(id).orElse(null);
+
+        if (existingNews != null) {
+            List<Comment> existingComment = existingNews.getComments();
+            existingNews.convertToDTO(newsDTO);
+            existingNews.setComments(existingComment);
+            News updatedNews = newsRepository.save(existingNews);
+
+            NewsDTO updatedDTO = new NewsDTO();
+            updatedDTO.convertToEntity(updatedNews);
+            return updatedDTO;
         }
         return null;
     }

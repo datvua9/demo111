@@ -1,13 +1,12 @@
 package com.example.demo.implementation;
 
 import com.example.demo.dto.GameDTO;
-import com.example.demo.model.Games;
 import com.example.demo.model.Reviews;
 import com.example.demo.repository.GamesRepository;
 import com.example.demo.repository.ReviewsRepository;
 import com.example.demo.service.GamePointService;
-import com.example.demo.service.IReviewService;
-import com.example.demo.service.RatingCalculator;
+import com.example.demo.IService.IReviewService;
+import com.example.demo.component.RatingCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

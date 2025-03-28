@@ -437,14 +437,14 @@ input .search-input{
 }
 
 .game-card {
-    width: 25%; /* Chiều rộng của mỗi card (4 cột) */
+    width: 21%; /* Chiều rộng của mỗi card (4 cột) */
     flex-shrink: 0; /* Ngăn các card co lại khi không đủ chỗ */
     border-radius: 10px; /* Bo tròn góc của card */
     overflow: hidden; /* Ẩn phần ảnh thừa nếu nó vượt quá vùng chứa */
     display: flex;
     flex-direction: column; /* Sắp xếp theo chiều dọc */
     align-items: center; /* Căn giữa theo chiều ngang */
-    margin: 10px;
+    margin: 5px;
 }
 
 .scroll-button {
@@ -469,7 +469,7 @@ input .search-input{
 }
 
 .game-card img {
-    width: 280px;
+    width: 250px;
     height: 350px;
     border-radius: 10px;
     object-fit: cover;
@@ -797,13 +797,7 @@ input .search-input{
 
 
 /*news*/
-.news_content{
-    margin-left: 200px;
-    margin-right: 20px;
-    padding: 20px;
 
-    margin-top: 70px;
-}
 .news_img{
     justify-content: center;
     max-width: 800px;
@@ -852,6 +846,19 @@ input .search-input{
     line-height: 1.6;
     color: #ffffff;
     text-align: justify;
+    margin-right: 20px;
+    padding: 20px;
+    margin-top: 70px;
+}
+.hot_news_content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #ffffff;
+    text-align: justify;
+    margin-right: 20px;
+    padding: 20px;
+    margin-top: 70px;
+    margin-left: 220px;
 }
 
 .news_content p {
