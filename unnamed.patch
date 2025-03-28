@@ -1,0 +1,3369 @@
+Index: src/main/java/com/example/demo/service/RatingCalculator.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/RatingCalculator.java b/src/main/java/com/example/demo/component/RatingCalculator.java
+rename from src/main/java/com/example/demo/service/RatingCalculator.java
+rename to src/main/java/com/example/demo/component/RatingCalculator.java
+--- a/src/main/java/com/example/demo/service/RatingCalculator.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/component/RatingCalculator.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,4 +1,4 @@
+-package com.example.demo.service;
++package com.example.demo.component;
+ 
+ import com.example.demo.model.Reviews;
+ import org.springframework.stereotype.Component;
+Index: src/main/java/com/example/demo/config/AppConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/AppConfig.java b/src/main/java/com/example/demo/config/AppConfig.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/config/AppConfig.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,26 @@
++package com.example.demo.config;
++
++import org.modelmapper.ModelMapper;
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.http.client.SimpleClientHttpRequestFactory;
++import org.springframework.web.client.RestTemplate;
++
++import java.net.InetSocketAddress;
++import java.net.Proxy;
++
++@Configuration
++public class AppConfig {
++
++    @Bean
++    public RestTemplate restTemplate() {
++        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
++        factory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.61.11.42", 3128)));
++        return new RestTemplate(factory);
++    }
++
++    @Bean
++    public ModelMapper modelMapper() {
++        return new ModelMapper();
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/config/CorsConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/CorsConfig.java b/src/main/java/com/example/demo/config/CorsConfig.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/config/CorsConfig.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,22 @@
++package com.example.demo.config;
++
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.web.servlet.config.annotation.CorsRegistry;
++import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
++
++@Configuration
++public class CorsConfig {
++    @Bean
++    public WebMvcConfigurer corsConfigurer() {
++        return new WebMvcConfigurer() {
++            @Override
++            public void addCorsMappings(CorsRegistry registry) {
++                registry.addMapping("/api/**")
++                        .allowedOrigins("*")
++                        .allowedMethods("GET", "POST", "PUT", "DELETE")
++                        .allowedHeaders("*");
++            }
++        };
++    }
++}
+Index: src/main/java/com/example/demo/config/CustomAuthenticationSuccessHandler.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/CustomAuthenticationSuccessHandler.java b/src/main/java/com/example/demo/config/CustomAuthenticationSuccessHandler.java
+--- a/src/main/java/com/example/demo/config/CustomAuthenticationSuccessHandler.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/config/CustomAuthenticationSuccessHandler.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -5,6 +5,7 @@
+ import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+ import jakarta.servlet.http.HttpServletRequest;
+ import jakarta.servlet.http.HttpServletResponse;
++
+ import java.io.IOException;
+ import java.util.Set;
+ 
+@@ -17,7 +18,6 @@
+             response.sendRedirect("/admin");
+         } else {
+             response.sendRedirect("/home");
+-
+         }
+     }
+-}
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/config/MvcConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/MvcConfig.java b/src/main/java/com/example/demo/config/MvcConfig.java
+deleted file mode 100644
+--- a/src/main/java/com/example/demo/config/MvcConfig.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ /dev/null	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
+@@ -1,11 +0,0 @@
+-package com.example.demo.config;
+-
+-
+-import org.springframework.context.annotation.Configuration;
+-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+-
+-@Configuration
+-public class MvcConfig implements WebMvcConfigurer {
+-
+-}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/config/SecurityConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/SecurityConfig.java b/src/main/java/com/example/demo/config/SecurityConfig.java
+--- a/src/main/java/com/example/demo/config/SecurityConfig.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/config/SecurityConfig.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,6 +1,8 @@
+ package com.example.demo.config;
+ 
+ import com.example.demo.repository.UserRepository;
++import com.example.demo.security.JwtAuthenticationFilter;
++import com.example.demo.security.JwtTokenProvider;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
+@@ -10,8 +12,10 @@
+ import org.springframework.security.core.userdetails.UserDetailsService;
+ import org.springframework.security.core.userdetails.UsernameNotFoundException;
+ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
++import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.security.web.SecurityFilterChain;
+ import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
++import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+ 
+ @Configuration
+ @EnableWebSecurity
+@@ -19,12 +23,24 @@
+ 
+     @Autowired
+     private UserRepository userRepository;
++    @Autowired
++    private JwtTokenProvider jwtTokenProvider;
+ 
+     @Bean
+     public BCryptPasswordEncoder passwordEncoder() {
+         return new BCryptPasswordEncoder();
+     }
+ 
++    @Bean
++    public AuthenticationSuccessHandler authenticationSuccessHandler() {
++        return new CustomAuthenticationSuccessHandler();
++    }
++
++    @Bean
++    public JwtAuthenticationFilter jwtAuthenticationFilter() {
++        return new JwtAuthenticationFilter();
++    }
++
+     @Bean
+     public UserDetailsService userDetailsService() {
+         return username -> {
+@@ -32,26 +48,23 @@
+             if (user == null) {
+                 throw new UsernameNotFoundException("User not found: " + username);
+             }
++            String roleName = user.getRole().getRoleName().replace("ROLE_", "");
+             return User.withUsername(user.getUsername())
+                     .password(user.getPassword())
+-                    .roles(user.getRole().replace("ROLE_", ""))
++                    .roles(roleName)
+                     .build();
+         };
+     }
+-
+-    @Bean
+-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+-        return new CustomAuthenticationSuccessHandler();
+-    }
+-
+     @Bean
+     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+         http
++                .csrf(csrf -> csrf
++                         .ignoringRequestMatchers("/api/**")
++                )
+                 .authorizeHttpRequests(authorize -> authorize
+-                        .requestMatchers("/signup","/login", "/css/**", "/js/**", "/img/**").permitAll() // Cho phép truy cập public resources
+-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+-                        .requestMatchers("/game/**").hasAnyRole("USER", "ADMIN")
+-                        .requestMatchers("/home").authenticated()
++                        .requestMatchers("/signup", "/css/**", "/js/**", "/img/**", "/login", "/logout").permitAll()
++                        .requestMatchers("/admin/**").authenticated()
++                        .requestMatchers("/api/**").permitAll()
+                         .anyRequest().authenticated()
+                 )
+                 .formLogin(form -> form
+@@ -64,6 +77,6 @@
+                         .logoutSuccessUrl("/login?logout")
+                         .permitAll()
+                 );
+-        return http.build();
+-    }
+-}
++            return http.build();
++        }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/config/WebConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/WebConfig.java b/src/main/java/com/example/demo/config/WebConfig.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/config/WebConfig.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,30 @@
++package com.example.demo.config;
++
++import com.example.demo.webSocket.GameUpdateHandler;
++import org.springframework.beans.factory.annotation.Value;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.web.servlet.config.annotation.CorsRegistry;
++import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
++import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
++import org.springframework.web.socket.config.annotation.EnableWebSocket;
++import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
++
++@Configuration
++@EnableWebSocket
++public class WebConfig implements WebMvcConfigurer {
++    @Value("${upload.dir}")
++    private String uploadDir;
++
++    @Override
++    public void addResourceHandlers(ResourceHandlerRegistry registry) {
++        registry.addResourceHandler("/uploads/**")
++                .addResourceLocations("file:" + uploadDir);
++    }
++    @Override
++    public void addCorsMappings(CorsRegistry registry) {
++        registry.addMapping("/api/games/**")
++                .allowedOrigins("*")
++                .allowedMethods("GET", "POST", "PUT", "DELETE")
++                .allowedHeaders("*");
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/config/WebSocketConfig.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/config/WebSocketConfig.java b/src/main/java/com/example/demo/config/WebSocketConfig.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/config/WebSocketConfig.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,16 @@
++package com.example.demo.config;
++
++import com.example.demo.webSocket.GameWebSocket;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.web.socket.config.annotation.EnableWebSocket;
++import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
++import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
++
++@Configuration
++@EnableWebSocket
++public class WebSocketConfig implements WebSocketConfigurer {
++    @Override
++    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
++        registry.addHandler(new GameWebSocket(), "/game-updates").setAllowedOrigins("*");
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/controller/AdminController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/AdminController.java b/src/main/java/com/example/demo/controller/AdminController.java
+--- a/src/main/java/com/example/demo/controller/AdminController.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/controller/AdminController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,22 +1,33 @@
+ package com.example.demo.controller;
+ 
++import com.example.demo.IService.IGameService;
+ import com.example.demo.dto.GameDTO;
+ import com.example.demo.service.GameService;
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.beans.factory.annotation.Value;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.PageRequest;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.ui.Model;
+ import org.springframework.web.bind.annotation.*;
++import org.springframework.web.multipart.MultipartFile;
++
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.Paths;
+ 
+ @Controller
+ @RequestMapping("/admin")
+ public class AdminController {
+-    private final GameService gameService;
++    private final IGameService gameService;
++
++    @Value("${upload.dir}")
++    private String uploadDir;
+ 
+     @Autowired
+-    public AdminController( GameService gameService) {
++    public AdminController(GameService gameService) {
+         this.gameService = gameService;
+     }
+ 
+@@ -31,25 +42,40 @@
+     }
+ 
+     @PostMapping("/add")
+-    public String addGame(@ModelAttribute GameDTO gameDTO) {
++    public String addGame(@ModelAttribute GameDTO gameDTO,
++                          @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
++        if (!imageFile.isEmpty()) {
++            String fileName = saveFile(imageFile);
++            gameDTO.setImage("/uploads/" + fileName);
++        }
+         gameService.createGame(gameDTO);
+         return "redirect:/admin";
+     }
+ 
+     @GetMapping("/edit/{id}")
+-    public String showEditGameForm(@PathVariable Long id, Model model) {
++    public String showEditGameForm(@PathVariable Long id,
++                                   @RequestParam(defaultValue = "0") int page,
++                                   Model model) {
+         GameDTO game = gameService.getGameById(id);
+         if (game != null) {
+             model.addAttribute("game", game);
++            model.addAttribute("page", page);
+             return "edit_game";
+         }
+         return "error/404";
+     }
+ 
+     @PostMapping("/edit/{id}")
+-    public String editGame(@PathVariable Long id, @ModelAttribute GameDTO gameDTO) {
++    public String editGame(@PathVariable Long id,
++                           @ModelAttribute GameDTO gameDTO,
++                           @RequestParam("imageFile") MultipartFile imageFile,
++                           @RequestParam(value = "page", defaultValue = "0") int page) throws IOException {
++        if (!imageFile.isEmpty()) {
++            String fileName = saveFile(imageFile);
++            gameDTO.setImage("/uploads/" + fileName);
++        }
+         gameService.updateGame(id, gameDTO);
+-        return "redirect:/admin";
++        return "redirect:/admin?page=" + page;
+     }
+ 
+     @PostMapping("/delete/{id}")
+@@ -58,4 +84,17 @@
+         return "redirect:/admin";
+     }
+ 
+-}
++    private String saveFile(MultipartFile file) throws IOException {
++        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
++        Path uploadPath = Paths.get(uploadDir);
++
++        if (!Files.exists(uploadPath)) {
++            Files.createDirectories(uploadPath);
++        }
++
++        Path filePath = uploadPath.resolve(fileName);
++        Files.write(filePath, file.getBytes());
++
++        return fileName;
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/controller/AdminNewsController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/AdminNewsController.java b/src/main/java/com/example/demo/controller/AdminNewsController.java
+--- a/src/main/java/com/example/demo/controller/AdminNewsController.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/controller/AdminNewsController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -29,6 +29,7 @@
+         model.addAttribute("totalPages", newsPage.getTotalPages());
+         return "admin_news";
+     }
++
+     @PostMapping("/add")
+     public String addNews(@ModelAttribute NewsDTO newsDTO) {
+         newsService.createNews(newsDTO);
+Index: src/main/java/com/example/demo/controller/AdminUserController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/AdminUserController.java b/src/main/java/com/example/demo/controller/AdminUserController.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/controller/AdminUserController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,39 @@
++package com.example.demo.controller;
++
++import com.example.demo.dto.UserDTO;
++import com.example.demo.service.UserService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.PageRequest;
++import org.springframework.data.domain.Pageable;
++import org.springframework.stereotype.Controller;
++import org.springframework.ui.Model;
++import org.springframework.web.bind.annotation.*;
++
++
++@Controller
++@RequestMapping("/admin/users")
++public class AdminUserController {
++    private final UserService userService;
++
++    @Autowired
++    public AdminUserController(UserService userService) {
++        this.userService = userService;
++    }
++
++    @GetMapping("")
++    public String adminUser(@RequestParam(defaultValue = "0")int page, Model model) {
++        Pageable pageable = PageRequest.of(page, 10);
++        Page<UserDTO> userPage = userService.getAllUsers(pageable);
++        model.addAttribute("user", userPage.getContent());
++        model.addAttribute("currentPage", page);
++        model.addAttribute("totalPages", userPage.getTotalPages());
++        return "admin_user";
++    }
++
++    @PostMapping("/delete/{id}")
++    public String deleteUser(@PathVariable Long id) {
++        userService.deleteUser(id);
++        return "redirect:/admin/users";
++    }
++}
+Index: src/main/java/com/example/demo/controller/AuthController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/AuthController.java b/src/main/java/com/example/demo/controller/AuthController.java
+--- a/src/main/java/com/example/demo/controller/AuthController.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/controller/AuthController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,21 +1,33 @@
+ package com.example.demo.controller;
+ 
++import com.example.demo.dto.AuthResponse;
++import com.example.demo.dto.LoginRequest;
+ import com.example.demo.dto.UserDTO;
++import com.example.demo.repository.UserRepository;
++import com.example.demo.security.JwtTokenProvider;
+ import com.example.demo.service.UserService;
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.http.ResponseEntity;
++import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.ui.Model;
+ import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.ModelAttribute;
+ import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestBody;
+ 
+ import java.util.List;
+ 
+ @Controller
+ public class AuthController {
+-
+     @Autowired
+     private UserService userService;
+-
++    @Autowired
++    private UserRepository userRepository;
++    @Autowired
++    private JwtTokenProvider jwtTokenProvider;
++    @Autowired
++    private BCryptPasswordEncoder passwordEncoder;
+     @GetMapping("/signup")
+     public String showRegisterForm(Model model) {
+         model.addAttribute("userDTO", new UserDTO());
+@@ -23,12 +35,17 @@
+     }
+ 
+     @PostMapping("/signup")
+-    public String register(UserDTO userDTO, Model model) {
++    public String register(@ModelAttribute("userDTO") UserDTO userDTO, Model model) {
++        if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
++            model.addAttribute("error", "Passwords do not match!");
++            return "signup";
++        }
++
+         try {
+             userService.registerUser(userDTO);
+             return "redirect:/login?success";
+         } catch (Exception e) {
+-            model.addAttribute("error", "Try another name " );
++            model.addAttribute("error", "Try another name.");
+             return "signup";
+         }
+     }
+@@ -37,4 +54,14 @@
+     public String showLoginForm() {
+         return "login";
+     }
++
++    @PostMapping("/login")
++    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
++        com.example.demo.model.User user = userRepository.findByUsername(loginRequest.getUsername());
++        if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
++            return ResponseEntity.badRequest().body("Invalid username or password");
++        }
++        String token = jwtTokenProvider.generateToken(user.getUsername());
++        return ResponseEntity.ok(new AuthResponse(token));
++    }
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/controller/GameAPIController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/GameAPIController.java b/src/main/java/com/example/demo/controller/GameAPIController.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/controller/GameAPIController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,61 @@
++package com.example.demo.controller;
++
++import com.example.demo.dto.GameDTO;
++import com.example.demo.service.GameService;
++import com.example.demo.webSocket.GameWebSocket;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.http.MediaType;
++import org.springframework.http.ResponseEntity;
++import org.springframework.web.bind.annotation.*;
++
++import java.util.List;
++
++@RestController
++@RequestMapping("/api/games")
++@CrossOrigin(origins = "*")
++public class GameAPIController {
++    @Autowired
++    private GameService gameService;
++
++    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
++    public ResponseEntity<List<GameDTO>> getAllGames() {
++        List<GameDTO> games = gameService.getAllGamesList();
++        return ResponseEntity.ok()
++                .contentType(MediaType.APPLICATION_JSON)
++                .body(games);
++    }
++
++    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
++    public ResponseEntity<GameDTO> updateGame(@PathVariable("id") Long id, @RequestBody GameDTO gameDTO) {
++        GameDTO updatedGame = gameService.updateGame(id, gameDTO);
++        if (updatedGame != null) {
++            GameWebSocket.notifyClients("Game " + id + " updated");
++            return ResponseEntity.ok(updatedGame);
++        } else {
++            return ResponseEntity.notFound().build();
++        }
++    }
++
++    @PostMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
++    public ResponseEntity<GameDTO> updateGamePost(@PathVariable("id") Long id, @RequestBody GameDTO gameDTO) {
++        System.out.println("Received update request for game: " + gameDTO.getGameId());
++        GameDTO updatedGame = gameService.updateGame(id, gameDTO);
++        if (updatedGame != null) {
++            GameWebSocket.notifyClients("Game " + id + " updated");
++            return ResponseEntity.ok(updatedGame);
++        } else {
++            return ResponseEntity.notFound().build();
++        }
++    }
++
++    @DeleteMapping(value = "/{id}")
++    public ResponseEntity<Void> deleteGame(@PathVariable("id") Long id) {
++        boolean deleted = gameService.deleteGame(id);
++        if (deleted) {
++            GameWebSocket.notifyClients("Game " + id + " deleted");
++            return ResponseEntity.noContent().build(); // 204 No Content
++        } else {
++            return ResponseEntity.notFound().build();
++        }
++    }
++}
+Index: src/main/java/com/example/demo/controller/GameController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/GameController.java b/src/main/java/com/example/demo/controller/GameController.java
+--- a/src/main/java/com/example/demo/controller/GameController.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/controller/GameController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,15 +1,12 @@
+ package com.example.demo.controller;
+ 
++import com.example.demo.IService.IGameService;
+ import com.example.demo.dto.GameDTO;
+-import com.example.demo.implementation.GameRestImple;
+ import com.example.demo.implementation.GameViewImple;
+ import com.example.demo.model.Reviews;
+ import com.example.demo.service.GameService;
++import com.example.demo.service.SteamApiService;
+ import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.data.domain.Page;
+-import org.springframework.data.domain.PageRequest;
+-import org.springframework.data.domain.Pageable;
+-import org.springframework.http.ResponseEntity;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.ui.Model;
+ import org.springframework.web.bind.annotation.*;
+@@ -20,22 +17,17 @@
+ @RequestMapping("/game")
+ public class GameController {
+     private final GameViewImple gameViewImple;
+-    private final GameRestImple gameRestImple;
+-    private final GameService gameService;
++    private final IGameService gameService;
++
++    @Autowired
++    private SteamApiService steamApiService;
+ 
+     @Autowired
+-    public GameController(GameViewImple gameViewImple, GameRestImple gameRestImple, GameService gameService) {
++    public GameController(GameViewImple gameViewImple, GameService gameService) {
+         this.gameViewImple = gameViewImple;
+-        this.gameRestImple = gameRestImple;
+         this.gameService = gameService;
+     }
+ 
+-    @GetMapping("/home")
+-    public String gameHome(Model model) {
+-        model.addAttribute("games", gameViewImple.getAllGames());
+-        return "game_home";
+-    }
+-
+     @GetMapping("/{id}")
+     public String gameDetails(@PathVariable Long id, Model model) {
+         GameDTO game = gameViewImple.getGameDetails(id);
+@@ -52,27 +44,18 @@
+             model.addAttribute("overallAverage", gameViewImple.calculateOverallAverage(reviews));
+             return "game_home";
+         } else {
+-            return "error/404";
++            return "404";
+         }
+     }
+ 
+-    @GetMapping("/api/all")
+-    public ResponseEntity<List<GameDTO>> getAllGames() {
+-        return gameRestImple.getAllGames();
+-    }
+-
+-    @PostMapping("/api/add")
+-    public ResponseEntity<GameDTO> createGame(@RequestBody GameDTO gameDTO) {
+-        return gameRestImple.createGame(gameDTO);
++    @GetMapping("/steam/{appId}")
++    public String steamGameDetails(@PathVariable Long appId, Model model) {
++        GameDTO game = steamApiService.getGameData(appId);
++        if (game != null && game.getName() != null) {
++            model.addAttribute("game", game);
++            return "steam_game";
++        } else {
++            return "404";
++        }
+     }
+-
+-    @PutMapping("/api/update/{id}")
+-    public ResponseEntity<GameDTO> updateGame(@PathVariable Long id, @RequestBody GameDTO gameDTO) {
+-        return gameRestImple.updateGame(id, gameDTO);
+-    }
+-
+-    @DeleteMapping("/api/delete/{id}")
+-    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
+-        return gameRestImple.deleteGame(id);
+-    }
+-}
+\ No newline at end of file
++}
+Index: src/main/java/com/example/demo/controller/ReviewController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/ReviewController.java b/src/main/java/com/example/demo/controller/ReviewController.java
+--- a/src/main/java/com/example/demo/controller/ReviewController.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/controller/ReviewController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,5 +1,6 @@
+ package com.example.demo.controller;
+ 
++import com.example.demo.IService.IGameService;
+ import com.example.demo.dto.GameDTO;
+ import com.example.demo.dto.ReviewDTO;
+ import com.example.demo.implementation.ReviewServiceImpl;
+@@ -20,7 +21,7 @@
+ @Controller
+ public class ReviewController {
+     private ReviewServiceImpl reviewService;
+-    private GameService gameService;
++    private IGameService gameService;
+     private UserService userService;
+ 
+     public ReviewController(ReviewServiceImpl reviewService, GameService gameService,UserService userService) {
+@@ -48,6 +49,10 @@
+             mav.addObject("errorMessage", "Không tìm thấy người dùng hoặc game.");
+             return mav;
+         }
++        Reviews existingReview = reviewService.getReviewByUserAndGameId(user, gameId);
++        if (existingReview != null) {
++            reviewService.deleteReview(existingReview);
++        }
+ 
+         ReviewDTO reviewDTO = new ReviewDTO(gameId, gameplayRating, musicRating, graphicsRating, storyRating, comment, platform, user.getUser_id(), LocalDate.now());
+         Reviews review = reviewDTO.convertToReview(user);
+Index: src/main/java/com/example/demo/controller/SteamApiController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/SteamApiController.java b/src/main/java/com/example/demo/controller/SteamApiController.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/controller/SteamApiController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,22 @@
++package com.example.demo.controller;
++
++import com.example.demo.dto.GameDTO;
++import com.example.demo.service.SteamApiService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.PathVariable;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RestController;
++
++@RestController
++@RequestMapping("/game")
++public class SteamApiController {
++
++    @Autowired
++    private SteamApiService steamApiService;
++
++    @GetMapping("/game/{appId}")
++    public GameDTO getGame(@PathVariable Long appId) {
++        return steamApiService.getGameData(appId);
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/controller/UserProfileController.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/controller/UserProfileController.java b/src/main/java/com/example/demo/controller/UserProfileController.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/controller/UserProfileController.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,129 @@
++package com.example.demo.controller;
++
++import com.example.demo.dto.UserDTO;
++import com.example.demo.dto.UserProfileDTO;
++import com.example.demo.model.User;
++import com.example.demo.model.UserProfile;
++import com.example.demo.repository.UserRepository;
++import com.example.demo.repository.UserProfileRepository;
++import org.modelmapper.ModelMapper;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.beans.factory.annotation.Value;
++import org.springframework.security.core.Authentication;
++import org.springframework.security.core.context.SecurityContextHolder;
++import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
++import org.springframework.stereotype.Controller;
++import org.springframework.transaction.annotation.Transactional;
++import org.springframework.ui.Model;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestParam;
++import org.springframework.web.multipart.MultipartFile;
++
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.Paths;
++
++@Controller
++public class UserProfileController {
++
++    @Autowired
++    private UserRepository userRepository;
++
++    @Autowired
++    private UserProfileRepository userProfileRepository;
++
++    @Autowired
++    private ModelMapper modelMapper;
++
++    @Autowired
++    private BCryptPasswordEncoder passwordEncoder;
++
++    @Value("${upload.dir:/uploads}")
++    private String uploadDir;
++
++    @GetMapping("/profile")
++    public String showProfile(Model model) {
++        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
++        String username = auth.getName();
++
++        User user = userRepository.findByUsername(username);
++        if (user == null) {
++            return "redirect:/login";
++        }
++
++        UserProfile userProfile = userProfileRepository.findByUser(user);
++
++        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
++        UserProfileDTO userProfileDTO = userProfile != null ? modelMapper.map(userProfile, UserProfileDTO.class) : new UserProfileDTO();
++
++        model.addAttribute("userDTO", userDTO);
++        model.addAttribute("userProfileDTO", userProfileDTO);
++        return "user_setting";
++    }
++
++    @PostMapping("/profile/save")
++    @Transactional
++    public String saveProfile(
++            @RequestParam("username") String username,
++            @RequestParam("email") String email,
++            @RequestParam(value = "newPassword", required = false) String newPassword,
++            @RequestParam("gender") String gender,
++            @RequestParam("birthdate") String birthdate,
++            @RequestParam("hobbies") String hobbies,
++            @RequestParam("bio") String bio,
++            @RequestParam(value = "avatar", required = false) MultipartFile avatarFile) throws IOException {
++        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
++        String currentUsername = auth.getName();
++        User user = userRepository.findByUsername(currentUsername);
++
++        user.setUsername(username);
++        user.setEmail(email);
++        if (newPassword != null && !newPassword.isEmpty()) {
++            user.setPassword(passwordEncoder.encode(newPassword));
++        }
++
++        UserProfile userProfile = userProfileRepository.findByUser(user);
++        String existingAvatar = null;
++        if (userProfile == null) {
++            System.out.println("Creating new UserProfile for user: " + user.getUsername());
++            userProfile = new UserProfile();
++            userProfile.setUser(user);
++        } else {
++            System.out.println("Updating existing UserProfile for user: " + user.getUsername());
++            existingAvatar = userProfile.getAvatar();
++        }
++        userProfile.setGender(gender);
++        userProfile.setBirthdate(java.sql.Date.valueOf(birthdate));
++        userProfile.setHobbies(hobbies);
++        userProfile.setBio(bio);
++
++        if (avatarFile != null && !avatarFile.isEmpty()) {
++            String fileName = saveFile(avatarFile);
++            userProfile.setAvatar("/uploads/" + fileName);
++        } else if (existingAvatar != null) {
++            userProfile.setAvatar(existingAvatar);
++        }
++
++        userRepository.save(user);
++        userProfileRepository.save(userProfile);
++
++        return "redirect:/home";
++    }
++
++    private String saveFile(MultipartFile file) throws IOException {
++        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
++        Path uploadPath = Paths.get(uploadDir);
++
++        if (!Files.exists(uploadPath)) {
++            Files.createDirectories(uploadPath);
++        }
++
++        Path filePath = uploadPath.resolve(fileName);
++        Files.write(filePath, file.getBytes());
++
++        System.out.println("Avatar saved at: " + filePath.toAbsolutePath());
++        return fileName;
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/dto/AuthResponse.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/AuthResponse.java b/src/main/java/com/example/demo/dto/AuthResponse.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/dto/AuthResponse.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,10 @@
++package com.example.demo.dto;
++
++import lombok.AllArgsConstructor;
++import lombok.Data;
++
++@Data
++@AllArgsConstructor
++public class AuthResponse {
++    private String token;
++}
+Index: src/main/java/com/example/demo/dto/GameDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/GameDTO.java b/src/main/java/com/example/demo/dto/GameDTO.java
+--- a/src/main/java/com/example/demo/dto/GameDTO.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/dto/GameDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -5,6 +5,7 @@
+ import org.springframework.format.annotation.DateTimeFormat;
+ 
+ import java.util.Date;
++import java.util.List;
+ 
+ @Data
+ public class GameDTO {
+@@ -20,6 +21,8 @@
+     private String video;
+     private int status;
+     private float rating;
++    private List<ReviewDTO> reviews;
++
+     public GameDTO() {}
+ 
+     public GameDTO(Long gameId, String name, String image, String genre) {
+@@ -29,6 +32,21 @@
+         this.genre = genre;
+     }
+ 
++    public Games toEntity() {
++        Games game = new Games();
++        game.setSteamAppId(this.gameId); // Gán steam_app_id từ gameId của DTO
++        game.setName(this.name);
++        game.setDescription(this.description);
++        game.setGenre(this.genre);
++        game.setPlatform(this.platform);
++        game.setReleaseDate(this.releaseDate);
++        game.setGameDeveloper(this.developer);
++        game.setImage(this.image);
++        game.setVideo(this.video);
++        game.setStatus(this.status);
++        return game;
++    }
++
+     public void convertToEntity(Games games) {
+         this.gameId = games.getGameId();
+         this.name = games.getName();
+@@ -41,5 +59,4 @@
+         this.video = games.getVideo();
+         this.status = games.getStatus();
+     }
+-
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/dto/LoginRequest.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/LoginRequest.java b/src/main/java/com/example/demo/dto/LoginRequest.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/dto/LoginRequest.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,9 @@
++package com.example.demo.dto;
++
++import lombok.Data;
++
++@Data
++public class LoginRequest {
++    private String username;
++    private String password;
++}
+Index: src/main/java/com/example/demo/dto/NewsDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/NewsDTO.java b/src/main/java/com/example/demo/dto/NewsDTO.java
+--- a/src/main/java/com/example/demo/dto/NewsDTO.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/dto/NewsDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,5 +1,7 @@
+ package com.example.demo.dto;
+ 
++import com.example.demo.model.Games;
++import com.example.demo.model.News;
+ import lombok.Data;
+ import org.springframework.format.annotation.DateTimeFormat;
+ 
+@@ -21,4 +23,11 @@
+         this.content = content;
+         this.image = image;
+     }
++    public void convertToEntity(News news) {
++          this.newsId = news.getNewsId();
++          this.title = news.getTitle();
++          this.content = news.getContent();
++          this.image = news.getImage();
++          this.created_at = news.getCreatedAt();
++    }
+ }
+Index: src/main/java/com/example/demo/dto/ReviewDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/ReviewDTO.java b/src/main/java/com/example/demo/dto/ReviewDTO.java
+--- a/src/main/java/com/example/demo/dto/ReviewDTO.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/dto/ReviewDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -18,8 +18,8 @@
+     private String comment;
+     private String platform;
+     private LocalDate reviewDate;
+-    private String username; // Thêm trường username
+-    private String gameName; // Thêm trường gameName
++    private String username;
++    private String gameName;
+ 
+     public ReviewDTO() {}
+ 
+@@ -35,19 +35,6 @@
+         this.reviewDate = reviewDate;
+     }
+ 
+-    public ReviewDTO(Long review_id, Long gameId, int gameplay_rating, int music_rating, int graphic_rating, int story_rating, String comment, String platform, Long userId, LocalDate reviewDate) {
+-        this.review_id = review_id;
+-        this.gameId = gameId;
+-        this.gameplay_rating = gameplay_rating;
+-        this.music_rating = music_rating;
+-        this.graphic_rating = graphic_rating;
+-        this.story_rating = story_rating;
+-        this.comment = comment;
+-        this.platform = platform;
+-        this.userId = userId;
+-        this.reviewDate = reviewDate;
+-    }
+-
+     public Reviews convertToReview(User user) {
+         Reviews review = new Reviews();
+         review.setReview_id(this.review_id);
+@@ -63,21 +50,6 @@
+         return review;
+     }
+ 
+-    // Sửa convertToEntity để nhận Reviews
+-    public void convertToEntity(Reviews reviews) {
+-        this.review_id = reviews.getReview_id();
+-        this.userId = reviews.getUser() != null ? reviews.getUser().getUser_id() : null;
+-        this.username = reviews.getUser() != null ? reviews.getUser().getUsername() : "Unknown";
+-        this.gameId = reviews.getGameId();
+-        this.gameplay_rating = reviews.getGameplay_rating();
+-        this.music_rating = reviews.getMusic_rating();
+-        this.graphic_rating = reviews.getGraphic_rating();
+-        this.story_rating = reviews.getStory_rating();
+-        this.comment = reviews.getComment();
+-        this.platform = reviews.getPlatform();
+-        this.reviewDate = reviews.getReviewDate();
+-    }
+-
+     public float getRating() {
+         return (float) (music_rating + gameplay_rating + story_rating + graphic_rating) / 4;
+     }
+Index: src/main/java/com/example/demo/dto/RoleDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/RoleDTO.java b/src/main/java/com/example/demo/dto/RoleDTO.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/dto/RoleDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,16 @@
++package com.example.demo.dto;
++
++import com.example.demo.model.Role;
++import com.example.demo.model.User;
++import lombok.Data;
++
++@Data
++public class RoleDTO {
++    private Long roleId;
++    private String roleName;
++
++    public void convertToEntity(Role role) {
++        this.roleId = role.getRole_id();
++        this.roleName = role.getRoleName();
++    }
++}
+Index: src/main/java/com/example/demo/dto/UserDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/UserDTO.java b/src/main/java/com/example/demo/dto/UserDTO.java
+--- a/src/main/java/com/example/demo/dto/UserDTO.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/dto/UserDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,5 +1,6 @@
+ package com.example.demo.dto;
+ 
++import com.example.demo.model.User;
+ import lombok.Data;
+ 
+ import java.time.LocalDate;
+@@ -8,10 +9,17 @@
+ @Data
+ public class UserDTO {
+     public UserDTO() {}
+-
++    private Long user_id;
+     private String username;
+     private String password;
++    private String confirmPassword;
+     private String email;
+-    private String role;
+-    private LocalDate createTime;
++    private LocalDate created_at;
++
++    public void convertToEntity(User user) {
++        this.user_id = user.getUser_id();
++        this.username = user.getUsername();
++        this.email = user.getEmail();
++        this.created_at = user.getCreated_at();
++    }
+ }
+Index: src/main/java/com/example/demo/dto/UserProfileDTO.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/dto/UserProfileDTO.java b/src/main/java/com/example/demo/dto/UserProfileDTO.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/dto/UserProfileDTO.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,17 @@
++package com.example.demo.dto;
++
++import lombok.Data;
++
++import java.util.Date;
++
++@Data
++public class UserProfileDTO {
++    public UserProfileDTO() {}
++    private Long profileId;
++    private Date birthdate;
++    private String hobbies;
++    private String gender;
++    private String bio;
++    private String avatar;
++
++}
+Index: src/main/java/com/example/demo/implementation/GameRestImple.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/implementation/GameRestImple.java b/src/main/java/com/example/demo/implementation/GameRestImple.java
+--- a/src/main/java/com/example/demo/implementation/GameRestImple.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/implementation/GameRestImple.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,39 +1,39 @@
+-package com.example.demo.implementation;
+-
+-import com.example.demo.dto.GameDTO;
+-import com.example.demo.service.GameService;
+-import org.springframework.http.HttpStatus;
+-import org.springframework.http.ResponseEntity;
+-import org.springframework.stereotype.Service;
+-
+-import java.util.List;
+-
+-@Service
+-public class GameRestImple {
+-    private final GameService gameService;
+-
+-    public GameRestImple(GameService gameService) {
+-        this.gameService = gameService;
+-    }
+-
+-    public ResponseEntity<List<GameDTO>> getAllGames() {
+-        List<GameDTO> games = gameService.getAllGamesList();
+-        return new ResponseEntity<>(games, HttpStatus.OK);
+-    }
+-
+-    public ResponseEntity<GameDTO> createGame(GameDTO gameDTO) {
+-        GameDTO createdGame = gameService.createGame(gameDTO);
+-        return new ResponseEntity<>(createdGame, HttpStatus.CREATED);
+-    }
+-
+-    public ResponseEntity<GameDTO> updateGame(Long id, GameDTO gameDTO) {
+-        GameDTO updatedGame = gameService.updateGame(id, gameDTO);
+-        return updatedGame != null ? new ResponseEntity<>(updatedGame, HttpStatus.OK) :
+-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+-    }
+-
+-    public ResponseEntity<Void> deleteGame(Long id) {
+-        gameService.deleteGame(id);
+-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+-    }
+-}
++//package com.example.demo.implementation;
++//
++//import com.example.demo.dto.GameDTO;
++//import com.example.demo.service.GameService;
++//import org.springframework.http.HttpStatus;
++//import org.springframework.http.ResponseEntity;
++//import org.springframework.stereotype.Service;
++//
++//import java.util.List;
++//
++//@Service
++//public class GameRestImple {
++//    private final GameService gameService;
++//
++//    public GameRestImple(GameService gameService) {
++//        this.gameService = gameService;
++//    }
++//
++//    public ResponseEntity<List<GameDTO>> getAllGames() {
++//        List<GameDTO> games = gameService.getAllGamesList();
++//        return new ResponseEntity<>(games, HttpStatus.OK);
++//    }
++//
++//    public ResponseEntity<GameDTO> createGame(GameDTO gameDTO) {
++//        GameDTO createdGame = gameService.createGame(gameDTO);
++//        return new ResponseEntity<>(createdGame, HttpStatus.CREATED);
++//    }
++//
++//    public ResponseEntity<GameDTO> updateGame(Long id, GameDTO gameDTO) {
++//        GameDTO updatedGame = gameService.updateGame(id, gameDTO);
++//        return updatedGame != null ? new ResponseEntity<>(updatedGame, HttpStatus.OK) :
++//                new ResponseEntity<>(HttpStatus.NOT_FOUND);
++//    }
++//
++//    public ResponseEntity<Void> deleteGame(Long id) {
++//        gameService.deleteGame(id);
++//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
++//    }
++//}
+Index: src/main/java/com/example/demo/implementation/GameViewImple.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/implementation/GameViewImple.java b/src/main/java/com/example/demo/implementation/GameViewImple.java
+--- a/src/main/java/com/example/demo/implementation/GameViewImple.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/implementation/GameViewImple.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,13 +1,12 @@
+ package com.example.demo.implementation;
+ 
+ import com.example.demo.dto.GameDTO;
+-import com.example.demo.model.Games;
+ import com.example.demo.model.Reviews;
+ import com.example.demo.repository.GamesRepository;
+ import com.example.demo.repository.ReviewsRepository;
+ import com.example.demo.service.GamePointService;
+-import com.example.demo.service.IReviewService;
+-import com.example.demo.service.RatingCalculator;
++import com.example.demo.IService.IReviewService;
++import com.example.demo.component.RatingCalculator;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+Index: src/main/java/com/example/demo/implementation/passRegenImple.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/implementation/passRegenImple.java b/src/main/java/com/example/demo/implementation/passRegenImple.java
+--- a/src/main/java/com/example/demo/implementation/passRegenImple.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/implementation/passRegenImple.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -5,7 +5,7 @@
+ public class passRegenImple {
+     public static void main(String[] args) {
+         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+-        String rawPassword = "admin123"; // Mật khẩu gốc
++        String rawPassword = "111111";
+         String encodedPassword = encoder.encode(rawPassword);
+         System.out.println(encodedPassword);
+     }
+Index: src/main/java/com/example/demo/implementation/ReviewServiceImpl.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/implementation/ReviewServiceImpl.java b/src/main/java/com/example/demo/implementation/ReviewServiceImpl.java
+--- a/src/main/java/com/example/demo/implementation/ReviewServiceImpl.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/implementation/ReviewServiceImpl.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -3,7 +3,7 @@
+ import com.example.demo.model.Reviews;
+ import com.example.demo.model.User;
+ import com.example.demo.repository.ReviewsRepository;
+-import com.example.demo.service.IReviewService;
++import com.example.demo.IService.IReviewService;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+@@ -29,6 +29,9 @@
+         reviewsRepository.save(review);
+     }
+ 
++    @Override
++    public void deleteReview(Reviews review) {reviewsRepository.delete(review);}
++
+     @Override
+     public List<Reviews> findByGameId(Long gameId) {
+         return reviewsRepository.findByGameId(gameId);
+Index: src/main/java/com/example/demo/service/IGameService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/IGameService.java b/src/main/java/com/example/demo/IService/IGameService.java
+rename from src/main/java/com/example/demo/service/IGameService.java
+rename to src/main/java/com/example/demo/IService/IGameService.java
+--- a/src/main/java/com/example/demo/service/IGameService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/IService/IGameService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,4 +1,4 @@
+-package com.example.demo.service;
++package com.example.demo.IService;
+ 
+ import com.example.demo.dto.GameDTO;
+ import org.springframework.data.domain.Page;
+@@ -16,5 +16,5 @@
+     List<GameDTO> getCommingGames();
+     GameDTO createGame(GameDTO gameDTO);
+     GameDTO updateGame(Long id, GameDTO gameDTO);
+-    void deleteGame(Long id);
++    boolean deleteGame(Long id);
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/service/IReviewService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/IReviewService.java b/src/main/java/com/example/demo/IService/IReviewService.java
+rename from src/main/java/com/example/demo/service/IReviewService.java
+rename to src/main/java/com/example/demo/IService/IReviewService.java
+--- a/src/main/java/com/example/demo/service/IReviewService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/IService/IReviewService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,4 +1,4 @@
+-package com.example.demo.service;
++package com.example.demo.IService;
+ 
+ import com.example.demo.model.Reviews;
+ import com.example.demo.model.User;
+@@ -9,6 +9,7 @@
+ public interface IReviewService {
+     List<Reviews> getAllReviews();
+     void saveReview(Reviews review);
++    void deleteReview(Reviews review);
+     List<Reviews> findByGameId(Long gameId);
+     Optional<Reviews> findById(Long reviewId);
+     void saveOrUpdateReview(Reviews review);
+Index: src/main/java/com/example/demo/IService/ReviewService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/IService/ReviewService.java b/src/main/java/com/example/demo/IService/ReviewService.java
+deleted file mode 100644
+--- a/src/main/java/com/example/demo/IService/ReviewService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ /dev/null	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
+@@ -1,22 +0,0 @@
+-package com.example.demo.IService;
+-
+-import com.example.demo.model.Reviews;
+-import com.example.demo.model.User;
+-
+-import java.util.List;
+-import java.util.Optional;
+-
+-public interface ReviewService {
+-
+-    List<Reviews> getAllReviews();
+-
+-    void saveReview(Reviews review);
+-
+-    List<Reviews> findByGameId(Long gameId);
+-
+-    Optional<Reviews> findById(Long reviewId);
+-
+-    void saveOrUpdateReview(Reviews review);
+-
+-    Reviews getReviewByUserAndGameId(User user, Long gameId);
+-}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/model/Criteria_Scores.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/Criteria_Scores.java b/src/main/java/com/example/demo/model/Criteria_Scores.java
+deleted file mode 100644
+--- a/src/main/java/com/example/demo/model/Criteria_Scores.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ /dev/null	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
+@@ -1,11 +0,0 @@
+-package com.example.demo.model;
+-
+-import jakarta.persistence.*;
+-
+-@Entity
+-@Table(name = "Criteria_Scores")
+-public class Criteria_Scores {
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private int id;
+-}
+Index: src/main/java/com/example/demo/model/Games.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/Games.java b/src/main/java/com/example/demo/model/Games.java
+--- a/src/main/java/com/example/demo/model/Games.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/model/Games.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,10 +1,12 @@
+ package com.example.demo.model;
++
+ import com.example.demo.dto.GameDTO;
+ import jakarta.persistence.*;
+ import lombok.Data;
+ 
+ import java.util.Date;
+ import java.util.List;
++
+ @Data
+ @Entity
+ @Table(name = "games")
+@@ -14,6 +16,9 @@
+     @Column(name = "game_id")
+     private Long gameId;
+ 
++    @Column(name = "steam_app_id")
++    private Long steamAppId;
++
+     @Column(name = "name")
+     private String name;
+ 
+@@ -36,7 +41,6 @@
+     @Column(name = "game_developer")
+     private String gameDeveloper;
+ 
+-
+     @Column(name = "image")
+     private String image;
+ 
+@@ -53,23 +57,15 @@
+     public Games() {}
+ 
+     public void convertToDTO(GameDTO dto) {
+-      this.gameId = dto.getGameId();
+-      this.name = dto.getName();
+-      this.description = dto.getDescription();
+-      this.genre = dto.getGenre();
+-      this.platform = dto.getPlatform();
+-      this.releaseDate = dto.getReleaseDate();
+-      this.gameDeveloper = dto.getDeveloper();
+-      this.image = dto.getImage();
+-      this.video = dto.getVideo();
+-      this.status = dto.getStatus();
++        this.steamAppId = dto.getGameId(); // Gán steam_app_id từ gameId của DTO
++        this.name = dto.getName();
++        this.description = dto.getDescription();
++        this.genre = dto.getGenre();
++        this.platform = dto.getPlatform();
++        this.releaseDate = dto.getReleaseDate();
++        this.gameDeveloper = dto.getDeveloper();
++        this.image = dto.getImage();
++        this.video = dto.getVideo();
++        this.status = dto.getStatus();
+     }
+-    private GameDTO convertToDTO(Games game) {
+-        GameDTO dto = new GameDTO();
+-        dto.setGameId(game.getGameId());
+-        dto.setName(game.getName());
+-        dto.setImage(game.getImage());
+-        dto.setGenre(game.getGenre());
+-        return dto;
+-    }
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/model/News.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/News.java b/src/main/java/com/example/demo/model/News.java
+--- a/src/main/java/com/example/demo/model/News.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/model/News.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,4 +1,6 @@
+ package com.example.demo.model;
++import com.example.demo.dto.GameDTO;
++import com.example.demo.dto.NewsDTO;
+ import jakarta.persistence.*;
+ import lombok.Data;
+ import org.springframework.format.annotation.DateTimeFormat;
+@@ -26,4 +28,11 @@
+     private List<Comment> comments;
+ 
+     public News() {}
++    public void convertToDTO(NewsDTO dto) {
++        this.newsId = dto.getNewsId();
++        this.title = dto.getTitle();
++        this.content = dto.getContent();
++        this.createdAt = dto.getCreated_at();
++        this.image = dto.getImage();
++    }
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/model/Role.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/Role.java b/src/main/java/com/example/demo/model/Role.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/model/Role.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,15 @@
++package com.example.demo.model;
++
++import jakarta.persistence.*;
++import lombok.Data;
++
++@Data
++@Entity
++@Table(name = "roles")
++public class Role {
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long role_id;
++    @Column(name = "role_name", nullable = false)
++    private String roleName;
++}
+Index: src/main/java/com/example/demo/model/User.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/User.java b/src/main/java/com/example/demo/model/User.java
+--- a/src/main/java/com/example/demo/model/User.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/model/User.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -15,14 +15,14 @@
+ public class User  {
+     @Id
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
+-
+     private Long user_id;
+     private String username;
+-    private String mail;
++    private String email;
+     private String password;
+     private LocalDate created_at;
+-    private String role;
+-
++    @ManyToOne
++    @JoinColumn(name = "role_id", nullable = false)
++    private Role role;
+     public User() {}
+ 
+ }
+Index: src/main/java/com/example/demo/model/UserProfile.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/model/UserProfile.java b/src/main/java/com/example/demo/model/UserProfile.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/model/UserProfile.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,30 @@
++package com.example.demo.model;
++
++import jakarta.persistence.*;
++import lombok.Data;
++
++import java.util.Date;
++
++@Data
++@Entity
++@Table(name ="user_profiles")
++public class UserProfile {
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    @Column(name = "profile_id")
++    private long profileId;
++
++    private Date birthdate;
++    private String hobbies;
++    private String gender;
++    private String bio;
++
++    @Column(name="avatar_url")
++    private String avatar;
++
++    @ManyToOne
++    @JoinColumn(name = "user_id", nullable = false)
++    private User user;
++
++    public UserProfile() {}
++}
+Index: src/main/java/com/example/demo/repository/CommentRepository.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/repository/CommentRepository.java b/src/main/java/com/example/demo/repository/CommentRepository.java
+--- a/src/main/java/com/example/demo/repository/CommentRepository.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/repository/CommentRepository.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -15,6 +15,5 @@
+ @Repository
+ public interface CommentRepository extends JpaRepository<Comment , Long> {
+     List<Comment> findByNewsId(Long newsId);
+-
+     Optional<Comment> findByUserAndNewsId(User user, Long newsId);
+ }
+Index: src/main/java/com/example/demo/repository/GamesRepository.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/repository/GamesRepository.java b/src/main/java/com/example/demo/repository/GamesRepository.java
+--- a/src/main/java/com/example/demo/repository/GamesRepository.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/repository/GamesRepository.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -9,11 +9,14 @@
+ import org.springframework.stereotype.Repository;
+ 
+ import java.util.List;
++import java.util.Optional;
++
+ @Repository
+ public interface GamesRepository extends JpaRepository<Games, Long> {
+     List<Games> findByGenre(String genre);
+     List<Games> findByStatus(int status);
+     List<Games> findByStatusNot(int status, Sort sort);
+-
+     Page<Games> findAll(Pageable pageable);
++    Optional<Games> findByName(String name);
++    Optional<Games> findBySteamAppId(Long steamAppId);
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/repository/ReviewsRepository.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/repository/ReviewsRepository.java b/src/main/java/com/example/demo/repository/ReviewsRepository.java
+--- a/src/main/java/com/example/demo/repository/ReviewsRepository.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/repository/ReviewsRepository.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -17,6 +17,5 @@
+ public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
+     Page<Reviews> findAll(Pageable pageable);
+     List<Reviews> findByGameId(Long gameId);
+-
+     Optional<Reviews> findByUserAndGameId(User user, Long gameId); // Sửa tên phương thức
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/repository/RoleRepository.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/repository/RoleRepository.java b/src/main/java/com/example/demo/repository/RoleRepository.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/repository/RoleRepository.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,10 @@
++package com.example.demo.repository;
++
++import com.example.demo.model.Role;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++import java.util.Optional;
++
++public interface RoleRepository extends JpaRepository<Role, Long> {
++    Optional<Role> findByRoleName(String role_name);
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/repository/UserProfileRepository.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/repository/UserProfileRepository.java b/src/main/java/com/example/demo/repository/UserProfileRepository.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/repository/UserProfileRepository.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,9 @@
++package com.example.demo.repository;
++
++import com.example.demo.model.User;
++import com.example.demo.model.UserProfile;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
++    UserProfile findByUser(User user);
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/security/JwtAuthenticationFilter.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/security/JwtAuthenticationFilter.java b/src/main/java/com/example/demo/security/JwtAuthenticationFilter.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/security/JwtAuthenticationFilter.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,56 @@
++package com.example.demo.security;
++
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
++import org.springframework.security.core.context.SecurityContextHolder;
++import org.springframework.security.core.userdetails.UserDetails;
++import org.springframework.security.core.userdetails.UserDetailsService;
++import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
++import org.springframework.util.StringUtils;
++import org.springframework.web.filter.OncePerRequestFilter;
++import jakarta.servlet.FilterChain;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++
++public class JwtAuthenticationFilter extends OncePerRequestFilter {
++
++    @Autowired
++    private JwtTokenProvider tokenProvider;
++
++    @Autowired
++    private UserDetailsService userDetailsService;
++
++    @Override
++    protected void doFilterInternal(HttpServletRequest request,
++                                    HttpServletResponse response,
++                                    FilterChain filterChain) throws ServletException, IOException {
++        try {
++            String jwt = getJwtFromRequest(request);
++            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
++                String username = tokenProvider.getUsernameFromJWT(jwt);
++                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
++                UsernamePasswordAuthenticationToken authentication =
++                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
++                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
++
++                // Đặt thông tin xác thực vào SecurityContextHolder
++                SecurityContextHolder.getContext().setAuthentication(authentication);
++            }
++        } catch (Exception ex) {
++            // Log exception nếu cần
++        }
++
++        filterChain.doFilter(request, response);
++    }
++
++    // Lấy token từ header Authorization
++    private String getJwtFromRequest(HttpServletRequest request) {
++        String bearerToken = request.getHeader("Authorization");
++        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
++            return bearerToken.substring(7);
++        }
++        return null;
++    }
++}
+Index: src/main/java/com/example/demo/security/JwtTokenProvider.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/security/JwtTokenProvider.java b/src/main/java/com/example/demo/security/JwtTokenProvider.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/security/JwtTokenProvider.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,54 @@
++package com.example.demo.security;
++
++import io.jsonwebtoken.Claims;
++import io.jsonwebtoken.Jwts;
++import io.jsonwebtoken.SignatureAlgorithm;
++import org.springframework.beans.factory.annotation.Value;
++import org.springframework.stereotype.Component;
++import java.util.Date;
++
++@Component
++public class JwtTokenProvider {
++
++    // Khóa bí mật dùng để mã hóa token (đặt ở file application.properties)
++    @Value("${jwt.secret}")
++    private String jwtSecret;
++
++    // Thời gian hiệu lực của token (mili giây)
++    @Value("${jwt.expirationInMs}")
++    private int jwtExpirationInMs;
++
++    // Tạo token dựa trên username
++    public String generateToken(String username) {
++        Date now = new Date();
++        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
++
++        return Jwts.builder()
++                .setSubject(username)
++                .setIssuedAt(now)
++                .setExpiration(expiryDate)
++                .signWith(SignatureAlgorithm.HS512, jwtSecret)
++                .compact();
++    }
++
++    // Lấy username từ token
++    public String getUsernameFromJWT(String token) {
++        Claims claims = Jwts.parser()
++                .setSigningKey(jwtSecret)
++                .parseClaimsJws(token)
++                .getBody();
++
++        return claims.getSubject();
++    }
++
++    // Kiểm tra tính hợp lệ của token
++    public boolean validateToken(String authToken) {
++        try {
++            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
++            return true;
++        } catch (Exception ex) {
++            // Log exception nếu cần
++        }
++        return false;
++    }
++}
+Index: src/main/java/com/example/demo/service/AdminService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/AdminService.java b/src/main/java/com/example/demo/service/AdminService.java
+deleted file mode 100644
+--- a/src/main/java/com/example/demo/service/AdminService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ /dev/null	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
+@@ -1,53 +0,0 @@
+-//package com.example.demo.service;
+-//
+-//import com.example.demo.dto.GameDTO;
+-//import com.example.demo.service.GameService;
+-//import org.springframework.stereotype.Service;
+-//import java.util.List;
+-//
+-//@Service
+-//public class AdminService {
+-//
+-//    private final GameService gameService;
+-//
+-//    public AdminService(GameService gameService) {
+-//        this.gameService = gameService;
+-//    }
+-//
+-//    public List<GameDTO> getAllGames() {
+-//        return gameService.getAllGamesList();
+-//    }
+-//}
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+Index: src/main/java/com/example/demo/service/GamePointService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/GamePointService.java b/src/main/java/com/example/demo/service/GamePointService.java
+--- a/src/main/java/com/example/demo/service/GamePointService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/service/GamePointService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,27 +1,14 @@
+ package com.example.demo.service;
+ 
+-import com.example.demo.model.Games;
+ import com.example.demo.model.Reviews;
+-import com.example.demo.repository.GamesRepository;
+-import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+ import java.util.List;
+-import java.util.Optional;
+ 
+ @Service
+ public class GamePointService {
+-    @Autowired
+-    private GamesRepository gamesRepository;
+-
+-    public Optional<Games> getGameById(Long id) {
+-        return gamesRepository.findById(id);
+-    }
+-
+-
+     public double calculateAverageRating(List<Reviews> reviews, String category) {
+         if (reviews.isEmpty()) return 0;
+-
+         double sum = 0;
+         for (Reviews review : reviews) {
+             switch (category) {
+@@ -34,13 +21,4 @@
+         }
+         return sum / reviews.size();
+     }
+-
+-    public double calculateOverallAverage(List<Reviews> reviews) {
+-        double avgGameplay = calculateAverageRating(reviews, "gameplay");
+-        double avgMusic = calculateAverageRating(reviews, "music");
+-        double avgGraphic = calculateAverageRating(reviews, "graphic");
+-        double avgStory = calculateAverageRating(reviews, "story");
+-
+-        return (avgGameplay + avgMusic + avgGraphic + avgStory) / 4;
+-    }
+ }
+Index: src/main/java/com/example/demo/service/GameService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/GameService.java b/src/main/java/com/example/demo/service/GameService.java
+--- a/src/main/java/com/example/demo/service/GameService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/service/GameService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,5 +1,7 @@
+ package com.example.demo.service;
+ 
++import com.example.demo.IService.IGameService;
++import com.example.demo.component.RatingCalculator;
+ import com.example.demo.dto.GameDTO;
+ import com.example.demo.model.Games;
+ import com.example.demo.model.Reviews;
+@@ -111,11 +113,14 @@
+ 
+     @Override
+     public GameDTO updateGame(Long id, GameDTO gameDTO) {
+-        if (gamesRepository.existsById(id)) {
+-            Games game = new Games();
+-            game.convertToDTO(gameDTO);
+-            game.setGameId(id);
+-            Games updatedGame = gamesRepository.save(game);
++        Games existingGame = gamesRepository.findById(id).orElse(null);
++
++        if (existingGame != null) {
++            List<Reviews> existingReviews = existingGame.getReviews();
++            existingGame.convertToDTO(gameDTO);
++            existingGame.setReviews(existingReviews);
++            Games updatedGame = gamesRepository.save(existingGame);
++
+             GameDTO updatedDTO = new GameDTO();
+             updatedDTO.convertToEntity(updatedGame);
+             return updatedDTO;
+@@ -124,7 +129,11 @@
+     }
+ 
+     @Override
+-    public void deleteGame(Long id) {
+-        gamesRepository.deleteById(id);
++    public boolean deleteGame(Long id) {
++        if (gamesRepository.existsById(id)) {
++            gamesRepository.deleteById(id);
++            return true;
++        }
++        return false;
+     }
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/service/NewsService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/NewsService.java b/src/main/java/com/example/demo/service/NewsService.java
+--- a/src/main/java/com/example/demo/service/NewsService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/service/NewsService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,7 +1,11 @@
+ package com.example.demo.service;
+ 
++import com.example.demo.dto.GameDTO;
+ import com.example.demo.dto.NewsDTO;
++import com.example.demo.model.Comment;
++import com.example.demo.model.Games;
+ import com.example.demo.model.News;
++import com.example.demo.model.Reviews;
+ import com.example.demo.repository.NewsRepository;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+@@ -52,11 +56,17 @@
+     }
+ 
+     public NewsDTO updateNews(Long id, NewsDTO newsDTO) {
+-        if (newsRepository.existsById(id)) {
+-            News news = convertToEntity(newsDTO);
+-            news.setNewsId(id);
+-            News updatedNews = newsRepository.save(news);
+-            return convertToDTO(updatedNews);
++        News existingNews = newsRepository.findById(id).orElse(null);
++
++        if (existingNews != null) {
++            List<Comment> existingComment = existingNews.getComments();
++            existingNews.convertToDTO(newsDTO);
++            existingNews.setComments(existingComment);
++            News updatedNews = newsRepository.save(existingNews);
++
++            NewsDTO updatedDTO = new NewsDTO();
++            updatedDTO.convertToEntity(updatedNews);
++            return updatedDTO;
+         }
+         return null;
+     }
+Index: src/main/java/com/example/demo/service/ReviewService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/ReviewService.java b/src/main/java/com/example/demo/service/ReviewService.java
+--- a/src/main/java/com/example/demo/service/ReviewService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/service/ReviewService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -22,12 +22,6 @@
+     @Autowired
+     private ReviewsRepository reviewsRepository;
+ 
+-    @Autowired
+-    private UserService userService;
+-
+-    @Autowired
+-    private GameService gameService;
+-
+     @PostConstruct
+     public void checkReviews() {
+         List<Reviews> reviews = reviewsRepository.findAll();
+@@ -41,40 +35,10 @@
+         return reviewDTOPage;
+     }
+ 
+-    public void saveReview(Reviews review) {
+-        reviewsRepository.save(review);
+-    }
+-
+-    public List<Reviews> findByGameId(Long gameId) {
+-        return reviewsRepository.findByGameId(gameId);
+-    }
+-
+     public Optional<Reviews> findById(Long reviewId) {
+         return reviewsRepository.findById(reviewId);
+     }
+ 
+-    public void saveOrUpdateReview(Reviews review) {
+-        Optional<Reviews> existingReview = reviewsRepository.findByUserAndGameId(review.getUser(), review.getGameId());
+-        if (existingReview.isPresent()) {
+-            Reviews updatedReview = existingReview.get();
+-            updatedReview.setMusic_rating(review.getMusic_rating());
+-            updatedReview.setGameplay_rating(review.getGameplay_rating());
+-            updatedReview.setStory_rating(review.getStory_rating());
+-            updatedReview.setGraphic_rating(review.getGraphic_rating());
+-            updatedReview.setComment(review.getComment());
+-            updatedReview.setPlatform(review.getPlatform());
+-            updatedReview.setReviewDate(LocalDate.now());
+-            reviewsRepository.save(updatedReview);
+-            return;
+-        }
+-        review.setReviewDate(LocalDate.now());
+-        reviewsRepository.save(review);
+-    }
+-
+-    public Reviews getReviewByUserAndGameId(User user, Long gameId) {
+-        return reviewsRepository.findByUserAndGameId(user, gameId).orElse(null);
+-    }
+-
+     public void deleteReview(Long reviewId) {
+         reviewsRepository.deleteById(reviewId);
+     }
+Index: src/main/java/com/example/demo/service/SteamApiService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/SteamApiService.java b/src/main/java/com/example/demo/service/SteamApiService.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/service/SteamApiService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,104 @@
++package com.example.demo.service;
++
++import com.example.demo.dto.GameDTO;
++import com.example.demo.model.Games;
++import com.example.demo.repository.GamesRepository;
++import com.fasterxml.jackson.databind.JsonNode;
++import com.fasterxml.jackson.databind.ObjectMapper;
++import org.springframework.stereotype.Service;
++import org.springframework.web.client.RestTemplate;
++
++import java.text.SimpleDateFormat;
++import java.util.Date;
++import java.util.Locale;
++import java.util.stream.Collectors;
++import java.util.stream.StreamSupport;
++
++@Service
++public class SteamApiService {
++    private final RestTemplate restTemplate;
++    private final ObjectMapper objectMapper;
++    private final GamesRepository gamesRepository;
++
++    private static final String STEAM_API_URL = "https://store.steampowered.com/api/appdetails?appids={appId}";
++
++    public SteamApiService(RestTemplate restTemplate, ObjectMapper objectMapper, GamesRepository gamesRepository) {
++        this.restTemplate = restTemplate;
++        this.objectMapper = objectMapper;
++        this.gamesRepository = gamesRepository;
++    }
++
++    public GameDTO getGameData(Long appId) {
++        try {
++            String response = restTemplate.getForObject(STEAM_API_URL, String.class, appId);
++            System.out.println("Steam API response: " + response);
++            GameDTO gameDTO = parseGameData(response, appId);
++
++            if (gameDTO != null && gameDTO.getName() != null) {
++                try {
++                    Games gameEntity = gameDTO.toEntity();
++                    gameEntity.setSteamAppId(appId);
++                    if (gamesRepository.findBySteamAppId(appId).isEmpty()) {
++                        System.out.println("Saving new game to database: " + gameDTO.getName());
++                        Games savedGame = gamesRepository.save(gameEntity);
++                        System.out.println("Game saved with game_id: " + savedGame.getGameId());
++                    } else {
++                        System.out.println("Game with steam_app_id " + appId + " already exists in database.");
++                    }
++                } catch (Exception e) {
++                    System.err.println("Error saving to database: " + e.getMessage());
++                    e.printStackTrace();
++                }
++            } else {
++                System.err.println("GameDTO is invalid or has no name.");
++            }
++            return gameDTO;
++        } catch (Exception e) {
++            System.err.println("Error fetching Steam API: " + e.getMessage());
++            return null;
++        }
++    }
++
++    private GameDTO parseGameData(String response, Long appId) {
++        GameDTO gameDTO = new GameDTO();
++        gameDTO.setGameId(appId);
++        try {
++            JsonNode root = objectMapper.readTree(response);
++            JsonNode appNode = root.path(String.valueOf(appId));
++            if (appNode.path("success").asBoolean()) {
++                JsonNode gameData = appNode.path("data");
++
++                gameDTO.setName(gameData.path("name").asText());
++                gameDTO.setDescription(gameData.path("short_description").asText());
++                JsonNode genresNode = gameData.path("genres");
++                if (genresNode.isArray()) {
++                    String genres = StreamSupport.stream(genresNode.spliterator(), false)
++                            .map(genre -> genre.path("description").asText())
++                            .collect(Collectors.joining(", "));
++                    gameDTO.setGenre(genres);
++                } else {
++                    gameDTO.setGenre("N/A");
++                }
++                gameDTO.setDeveloper(gameData.path("developers").get(0).asText());
++
++                JsonNode movies = gameData.path("movies");
++                if (movies.isArray() && movies.size() > 0) {
++                    String videoUrl = movies.get(0).path("webm").path("480").asText();
++                    gameDTO.setVideo(videoUrl != null ? videoUrl : movies.get(0).path("mp4").path("480").asText());
++                }
++
++                String releaseDateStr = gameData.path("release_date").path("date").asText();
++                if (releaseDateStr != null && !releaseDateStr.isEmpty()) {
++                    SimpleDateFormat formatter = new SimpleDateFormat("d MMM, yyyy", Locale.ENGLISH);
++                    Date releaseDate = formatter.parse(releaseDateStr);
++                    gameDTO.setReleaseDate(releaseDate);
++                }
++            } else {
++                System.err.println("Steam API returned success=false for appId: " + appId);
++            }
++        } catch (Exception e) {
++            System.err.println("Error parsing Steam API response: " + e.getMessage());
++        }
++        return gameDTO;
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/service/UserService.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/service/UserService.java b/src/main/java/com/example/demo/service/UserService.java
+--- a/src/main/java/com/example/demo/service/UserService.java	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/java/com/example/demo/service/UserService.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,9 +1,15 @@
+ package com.example.demo.service;
+ 
++import com.example.demo.dto.NewsDTO;
+ import com.example.demo.dto.UserDTO;
++import com.example.demo.model.News;
++import com.example.demo.model.Role;
+ import com.example.demo.model.User;
++import com.example.demo.repository.RoleRepository;
+ import com.example.demo.repository.UserRepository;
+ import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.Pageable;
+ import org.springframework.security.core.context.SecurityContextHolder;
+ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ import org.springframework.stereotype.Service;
+@@ -12,10 +18,12 @@
+ 
+ @Service
+ public class UserService {
+-
+     @Autowired
+     private UserRepository userRepository;
+ 
++    @Autowired
++    private RoleRepository roleRepository;
++
+     @Autowired
+     private BCryptPasswordEncoder passwordEncoder;
+ 
+@@ -23,9 +31,13 @@
+         User user = new User();
+         user.setUsername(userDTO.getUsername());
+         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+-        user.setMail(userDTO.getEmail());
++        user.setEmail(userDTO.getEmail());
+         user.setCreated_at(LocalDate.now());
+-        user.setRole(userDTO.getRole() != null ? userDTO.getRole() : "ROLE_USER");
++        Role userRole = roleRepository.findByRoleName("ROLE_USER")
++                .orElseThrow(() -> new RuntimeException("Role not found"));
++        user.setRole(userRole);
++
++
+         return userRepository.save(user);
+     }
+ 
+@@ -33,7 +45,16 @@
+         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+         return userRepository.findByUsername(username);
+     }
+-    public User getUserById(Long userId) {
+-        return userRepository.findById(userId).orElse(null);
++
++    public Page<UserDTO> getAllUsers(Pageable pageable) {
++        return userRepository.findAll(pageable).map(user -> {
++            UserDTO userDTO = new UserDTO();
++            userDTO.convertToEntity(user);
++            return userDTO;
++        });
+     }
++
++    public void deleteUser(Long userId) {userRepository.deleteById(userId);}
++
++
+ }
+\ No newline at end of file
+Index: src/main/java/com/example/demo/webSocket/GameUpdateHandler.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/webSocket/GameUpdateHandler.java b/src/main/java/com/example/demo/webSocket/GameUpdateHandler.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/webSocket/GameUpdateHandler.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,30 @@
++package com.example.demo.webSocket;
++
++import org.springframework.web.socket.CloseStatus;
++import org.springframework.web.socket.TextMessage;
++import org.springframework.web.socket.WebSocketSession;
++import org.springframework.web.socket.handler.TextWebSocketHandler;
++import java.util.ArrayList;
++import java.util.List;
++
++public class GameUpdateHandler extends TextWebSocketHandler {
++    private final List<WebSocketSession> sessions = new ArrayList<>();
++
++    @Override
++    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
++        sessions.add(session);
++    }
++
++    @Override
++    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
++        sessions.remove(session);
++    }
++
++    public void notifyClients(String message) throws Exception {
++        for (WebSocketSession session : sessions) {
++            if (session.isOpen()) {
++                session.sendMessage(new TextMessage(message));
++            }
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/demo/webSocket/GameWebSocket.java
+===================================================================
+diff --git a/src/main/java/com/example/demo/webSocket/GameWebSocket.java b/src/main/java/com/example/demo/webSocket/GameWebSocket.java
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/java/com/example/demo/webSocket/GameWebSocket.java	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,37 @@
++package com.example.demo.webSocket;
++
++import org.springframework.web.socket.CloseStatus;
++import org.springframework.web.socket.TextMessage;
++import org.springframework.web.socket.WebSocketSession;
++import org.springframework.web.socket.handler.TextWebSocketHandler;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class GameWebSocket extends TextWebSocketHandler {
++    private static final List<WebSocketSession> sessions = new ArrayList<>();
++
++    @Override
++    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
++        sessions.add(session);
++        System.out.println("New client connected: " + session.getId());
++    }
++
++    @Override
++    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
++        sessions.remove(session);
++        System.out.println("Client disconnected: " + session.getId());
++    }
++
++    public static void notifyClients(String message) {
++        for (WebSocketSession session : sessions) {
++            try {
++                if (session.isOpen()) {
++                    session.sendMessage(new TextMessage(message));
++                }
++            } catch (Exception e) {
++                e.printStackTrace();
++            }
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/resources/static/css/admin.css
+===================================================================
+diff --git a/src/main/resources/static/css/admin.css b/src/main/resources/static/css/admin.css
+--- a/src/main/resources/static/css/admin.css	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/static/css/admin.css	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -6,7 +6,7 @@
+ 
+ .container {
+     margin-left: 500px;
+-    width: 90%;
++    width: 30%;
+     margin: 20px auto;
+ }
+ 
+@@ -143,18 +143,15 @@
+     color: #ffffff;
+ }
+ 
+-/* Biểu tượng */
+ .nav-link i {
+     margin-right: 10px;
+     width: 20px; /* Đảm bảo biểu tượng cố định */
+ }
+ 
+-/* Văn bản trong nav */
+ .nav-text {
+     display: inline; /* Hiển thị khi mở rộng */
+ }
+ 
+-/* Form đăng xuất */
+ .logout-form {
+     margin: 0;
+     padding: 0;
+@@ -189,4 +186,10 @@
+ /* Khi sidebar mở rộng, đẩy content sang phải thêm */
+ .sidebar:hover ~ .content {
+     margin-left: 200px;
++}
++.video-col {
++    width: 20px; /* Điều chỉnh chiều rộng theo ý muốn */
++    overflow: hidden;
++    white-space: nowrap;
++    text-overflow: ellipsis;
+ }
+\ No newline at end of file
+Index: src/main/resources/static/css/gameStyle.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/static/css/gameStyle.css b/src/main/resources/static/css/gameStyle.css
+--- a/src/main/resources/static/css/gameStyle.css	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/static/css/gameStyle.css	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -437,14 +437,14 @@
+ }
+ 
+ .game-card {
+-    width: 25%; /* Chiều rộng của mỗi card (4 cột) */
++    width: 21%; /* Chiều rộng của mỗi card (4 cột) */
+     flex-shrink: 0; /* Ngăn các card co lại khi không đủ chỗ */
+     border-radius: 10px; /* Bo tròn góc của card */
+     overflow: hidden; /* Ẩn phần ảnh thừa nếu nó vượt quá vùng chứa */
+     display: flex;
+     flex-direction: column; /* Sắp xếp theo chiều dọc */
+     align-items: center; /* Căn giữa theo chiều ngang */
+-    margin: 10px;
++    margin: 5px;
+ }
+ 
+ .scroll-button {
+@@ -469,7 +469,7 @@
+ }
+ 
+ .game-card img {
+-    width: 280px;
++    width: 250px;
+     height: 350px;
+     border-radius: 10px;
+     object-fit: cover;
+@@ -797,13 +797,7 @@
+ 
+ 
+ /*news*/
+-.news_content{
+-    margin-left: 200px;
+-    margin-right: 20px;
+-    padding: 20px;
+ 
+-    margin-top: 70px;
+-}
+ .news_img{
+     justify-content: center;
+     max-width: 800px;
+@@ -852,6 +846,19 @@
+     line-height: 1.6;
+     color: #ffffff;
+     text-align: justify;
++    margin-right: 20px;
++    padding: 20px;
++    margin-top: 70px;
++}
++.hot_news_content {
++    font-size: 16px;
++    line-height: 1.6;
++    color: #ffffff;
++    text-align: justify;
++    margin-right: 20px;
++    padding: 20px;
++    margin-top: 70px;
++    margin-left: 220px;
+ }
+ 
+ .news_content p {
+Index: src/main/resources/static/css/profile.css
+===================================================================
+diff --git a/src/main/resources/static/css/profile.css b/src/main/resources/static/css/profile.css
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/resources/static/css/profile.css	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,35 @@
++body {
++    display: flex;
++    justify-content: center;
++    align-items: center;
++    height: 100vh;
++    background-color: #b067ff;
++}
++.form{
++    width: 80%;
++    display: flex;
++    justify-content: center;
++    align-items: center;
++}
++.profile-container {
++    max-width: 1200px;
++    background: white;
++    padding: 20px;
++    border-radius: 10px;
++    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
++    margin: 50px auto;
++}
++.profile-left {
++    text-align: center;
++}
++.profile-left img {
++    width: 150px;
++    height: 150px;
++    border-radius: 50%;
++    object-fit: cover;
++}
++
++.form-control-file mt-2{
++    justify-content: center;
++    align-items: center;
++}
+\ No newline at end of file
+Index: src/main/resources/static/css/signIn.css
+===================================================================
+diff --git a/src/main/resources/static/css/signIn.css b/src/main/resources/static/css/signIn.css
+--- a/src/main/resources/static/css/signIn.css	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/static/css/signIn.css	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -42,9 +42,9 @@
+     text-transform: uppercase;
+     letter-spacing: 3px;
+     border-radius: 10px;
+-    border: solid 1px #1034aa;
++    border: solid 1px #4810aa;
+     border-bottom: solid 1px #90c2ff;
+-    background: linear-gradient(135deg, #0034de, #006eff);
++    background: linear-gradient(135deg, #5900de, #7b00ff);
+     color: #fff;
+     font-weight: bolder;
+     transition: all 0.2s ease;
+@@ -63,7 +63,7 @@
+ 
+ .input-field label {
+     position: absolute;
+-    color: #8d8d8d;
++    color: #000000;
+     pointer-events: none;
+     background-color: transparent;
+     left: 15px;
+@@ -83,7 +83,7 @@
+ .input-field input:focus,
+ .input-field input:valid {
+     outline: none;
+-    border: solid 1px #0034de;
++    border: solid 1px #5100de;
+ }
+ 
+ .input-field input:focus ~ label,
+@@ -91,7 +91,7 @@
+     transform: translateY(-51%) translateX(-10px) scale(0.8);
+     background-color: #fff;
+     padding: 0px 5px;
+-    color: #0034de;
++    color: #6b00de;
+     font-weight: bold;
+     letter-spacing: 1px;
+     border: none;
+Index: src/main/resources/templates/404.html
+===================================================================
+diff --git a/src/main/resources/templates/404.html b/src/main/resources/templates/404.html
+--- a/src/main/resources/templates/404.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/404.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,9 +1,15 @@
+ <!DOCTYPE html>
+ <html xmlns:th="http://www.thymeleaf.org">
+ <head>
+-    <title>Lỗi</title>
++    <meta charset="UTF-8">
++    <title>404 - Game Not Found</title>
++    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+ </head>
+ <body>
+-<h1>Có lỗi xảy ra!</h1>
+-<p th:text="${errorMessage}"></p>  </body>
++<div class="content">
++    <h1>404 - Game Not Found</h1>
++    <p>Sorry, we couldn't find the game you're looking for.</p>
++    <a th:href="@{/}">Back to Home</a>
++</div>
++</body>
+ </html>
+\ No newline at end of file
+Index: src/main/resources/templates/admin.html
+===================================================================
+diff --git a/src/main/resources/templates/admin.html b/src/main/resources/templates/admin.html
+--- a/src/main/resources/templates/admin.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/admin.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -9,33 +9,7 @@
+ </head>
+ <body>
+ 
+-<div th:fragment="navbar" class="sidebar" id="sidebar">
+-    <nav class="nav flex-column">
+-        <a class="nav-link" th:href="@{/admin}">
+-            <i class="fas fa-gamepad"></i>
+-            <span class="nav-text">Game</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/news}">
+-            <i class="fas fa-newspaper"></i>
+-            <span class="nav-text">News</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/reviews}">
+-            <i class="fas fa-star"></i>
+-            <span class="nav-text">Review</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/game/comments}">
+-            <i class="fas fa-comment"></i>
+-            <span class="nav-text">Comment</span>
+-        </a>
+-        <form th:action="@{/logout}" method="post" class="logout-form">
+-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+-            <button type="submit" class="nav-link logout-btn">
+-                <i class="fas fa-sign-out-alt"></i>
+-                <span class="nav-text">Logout</span>
+-            </button>
+-        </form>
+-    </nav>
+-</div>
++<div th:insert="admin_navbar::admin_navbar"></div>
+ <div class="container mt-4">
+     <div class="d-flex justify-content-between align-items-center mb-3">
+         <h2>Danh sách Game</h2>
+@@ -60,13 +34,12 @@
+         <tr>
+             <th>STT</th>
+             <th>Tên</th>
+-            <th class="description-col">Mô tả</th> <!-- Thêm class để tăng chiều rộng -->
++            <th class="description-col">Mô tả</th>
+             <th>Thể loại</th>
+             <th>Nền tảng</th>
+             <th>Ngày ra mắt</th>
+             <th>Nhà phát triển</th>
+             <th>Ảnh</th>
+-            <th>Video</th>
+             <th>Trạng thái</th>
+             <th>Hành động</th>
+         </tr>
+@@ -84,10 +57,9 @@
+             <td th:text="${game.releaseDate}"></td>
+             <td th:text="${game.developer}"></td>
+             <td><img th:src="${game.image}" width="100" alt="Game Image" th:unless="${game.image == null}"/></td>
+-            <td><a th:href="${game.video}" th:text="${game.video}" th:unless="${game.video == null}"></a></td>
+             <td th:text="${game.status == 1 ? 'Hoạt động' : 'Không hoạt động'}"></td>
+             <td>
+-                <a th:href="@{/admin/edit/{id}(id=${game.gameId})}" class="btn btn-sm btn-warning">Sửa</a>
++                <a th:href="@{/admin/edit/{id}(id=${game.gameId}, page=${currentPage})}" class="btn btn-sm btn-warning">Sửa</a>
+                 <form th:action="@{/admin/delete/{id}(id=${game.gameId})}" method="post" style="display:inline;">
+                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Xóa</button>
+@@ -109,7 +81,7 @@
+                 </button>
+             </div>
+             <div class="modal-body">
+-                <form id="addGameForm" th:action="@{/admin/add}" method="post">
++                <form id="addGameForm" th:action="@{/admin/add}" method="post" enctype="multipart/form-data">
+                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                     <div class="form-group">
+                         <label for="gameName">Tên</label>
+@@ -136,8 +108,12 @@
+                         <input type="text" class="form-control" id="gameDeveloper" name="developer" required>
+                     </div>
+                     <div class="form-group">
+-                        <label for="gameImage">Ảnh (URL)</label>
+-                        <input type="url" class="form-control" id="gameImage" name="image" required>
++                        <label for="gameImage">Ảnh (PNG/JPG)</label>
++                        <input type="file" class="form-control-file" id="gameImage" name="imageFile" accept=".png, .jpg, .jpeg" onchange="previewImage(event)" required>
++                        <div id="imagePreview" style="display: none; margin-top: 10px;">
++                            <p>Ảnh xem trước:</p>
++                            <img id="previewImg" alt="Preview Image" style="max-width: 200px;">
++                        </div>
+                     </div>
+                     <div class="form-group">
+                         <label for="gameVideo">Video (URL)</label>
+@@ -163,14 +139,17 @@
+ <script>
+     $(document).ready(function() {
+         $("#addGameForm").on("submit", function(event) {
+-            event.preventDefault(); // Ngăn reload mặc định
++            event.preventDefault();
++            let formData = new FormData(this);
+             $.ajax({
+                 url: $(this).attr("action"),
+                 type: "POST",
+-                data: $(this).serialize(),
++                data: formData,
++                processData: false,
++                contentType: false,
+                 success: function() {
+                     $('#addGameModal').modal('hide');
+-                    location.reload(); // Reload trang
++                    location.reload();
+                 },
+                 error: function(xhr) {
+                     alert("Error: " + xhr.responseText);
+@@ -178,6 +157,23 @@
+             });
+         });
+     });
++
++    function previewImage(event) {
++        const file = event.target.files[0];
++        const previewContainer = document.getElementById('imagePreview');
++        const previewImg = document.getElementById('previewImg');
++
++        if (file) {
++            const reader = new FileReader();
++            reader.onload = function(e) {
++                previewImg.src = e.target.result;
++                previewContainer.style.display = 'block';
++            };
++            reader.readAsDataURL(file);
++        } else {
++            previewContainer.style.display = 'none';
++        }
++    }
+ </script>
+ </body>
+ </html>
+\ No newline at end of file
+Index: src/main/resources/templates/admin_navbar.html
+===================================================================
+diff --git a/src/main/resources/templates/admin_navbar.html b/src/main/resources/templates/admin_navbar.html
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/resources/templates/admin_navbar.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,39 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++    <meta charset="UTF-8">
++    <title>Title</title>
++</head>
++<body>
++<div th:fragment="admin_navbar" class="sidebar" id="sidebar">
++    <nav class="nav flex-column">
++        <a class="nav-link" th:href="@{/admin}">
++            <i class="fas fa-gamepad"></i>
++            <span class="nav-text">Game</span>
++        </a>
++        <a class="nav-link" th:href="@{/admin/news}">
++            <i class="fas fa-newspaper"></i>
++            <span class="nav-text">News</span>
++        </a>
++        <a class="nav-link" th:href="@{/admin/reviews}">
++            <i class="fas fa-star"></i>
++            <span class="nav-text">Review</span>
++        </a>
++        <a class="nav-link" th:href="@{/admin/comments}">
++            <i class="fas fa-comment"></i>
++            <span class="nav-text">Comment</span>
++        </a>
++        <a class="nav-link" th:href="@{/admin/users}">
++            <i class="fas fa-user"></i>
++            <span class="nav-text">User</span>
++        </a>
++        <form th:action="@{/logout}" method="post" class="logout-form">
++            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
++            <button type="submit" class="nav-link logout-btn">
++                <i class="fas fa-sign-out-alt"></i>
++                <span class="nav-text">Logout</span>
++            </button>
++        </form>
++    </nav>
++</div></body>
++</html>
+\ No newline at end of file
+Index: src/main/resources/templates/admin_news.html
+===================================================================
+diff --git a/src/main/resources/templates/admin_news.html b/src/main/resources/templates/admin_news.html
+--- a/src/main/resources/templates/admin_news.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/admin_news.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -8,33 +8,7 @@
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+ </head>
+ <body>
+-<div th:fragment="navbar" class="sidebar" id="sidebar">
+-    <nav class="nav flex-column">
+-        <a class="nav-link" th:href="@{/admin}">
+-            <i class="fas fa-gamepad"></i>
+-            <span class="nav-text">Game</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/news}">
+-            <i class="fas fa-newspaper"></i>
+-            <span class="nav-text">News</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/reviews}">
+-            <i class="fas fa-star"></i>
+-            <span class="nav-text">Review</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/game/comments}">
+-            <i class="fas fa-comment"></i>
+-            <span class="nav-text">Comment</span>
+-        </a>
+-        <form th:action="@{/logout}" method="post" class="logout-form">
+-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+-            <button type="submit" class="nav-link logout-btn">
+-                <i class="fas fa-sign-out-alt"></i>
+-                <span class="nav-text">Logout</span>
+-            </button>
+-        </form>
+-    </nav>
+-</div>
++<div th:insert="admin_navbar::admin_navbar"></div>
+ 
+ <div class="container mt-4">
+     <div class="d-flex justify-content-between align-items-center mb-3">
+Index: src/main/resources/templates/admin_reviews.html
+===================================================================
+diff --git a/src/main/resources/templates/admin_reviews.html b/src/main/resources/templates/admin_reviews.html
+--- a/src/main/resources/templates/admin_reviews.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/admin_reviews.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -6,36 +6,9 @@
+     <link rel="stylesheet" th:href="@{/css/admin.css}">
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+-
+ </head>
+ <body>
+-<div th:fragment="navbar" class="sidebar" id="sidebar">
+-    <nav class="nav flex-column">
+-        <a class="nav-link" th:href="@{/admin}">
+-            <i class="fas fa-gamepad"></i>
+-            <span class="nav-text">Game</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/news}">
+-            <i class="fas fa-newspaper"></i>
+-            <span class="nav-text">News</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/admin/reviews}">
+-            <i class="fas fa-star"></i>
+-            <span class="nav-text">Review</span>
+-        </a>
+-        <a class="nav-link" th:href="@{/game/comments}">
+-            <i class="fas fa-comment"></i>
+-            <span class="nav-text">Comment</span>
+-        </a>
+-        <form th:action="@{/logout}" method="post" class="logout-form">
+-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+-            <button type="submit" class="nav-link logout-btn">
+-                <i class="fas fa-sign-out-alt"></i>
+-                <span class="nav-text">Logout</span>
+-            </button>
+-        </form>
+-    </nav>
+-</div>
++<div th:insert="admin_navbar::admin_navbar"></div>
+ 
+ <div class="content">
+     <div class="container mt-4">
+@@ -102,10 +75,11 @@
+                 <td th:text="${review.comment}"></td>
+                 <td th:text="${review.reviewDate}"></td>
+                 <td>
+-                    <form th:action="@{/admin/reviews/delete(id=${review.review_id})}" method="post" style="display:inline;">
++                    <form th:action="@{/admin/reviews/delete/{id}(id=${review.review_id})}" method="post" style="display:inline;">
+                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Xóa</button>
+                     </form>
++
+                 </td>
+             </tr>
+             </tbody>
+@@ -113,10 +87,6 @@
+     </div>
+ </div>
+ 
+-
+-
+-
+-
+ <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+Index: src/main/resources/templates/admin_user.html
+===================================================================
+diff --git a/src/main/resources/templates/admin_user.html b/src/main/resources/templates/admin_user.html
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/resources/templates/admin_user.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,64 @@
++<!DOCTYPE html>
++<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
++<head>
++  <meta charset="UTF-8">
++  <title>User Dashboard</title>
++  <link rel="stylesheet" th:href="@{/css/admin.css}">
++  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
++  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
++</head>
++<body>
++<div th:insert="admin_navbar::admin_navbar"></div>
++
++<div class="content">
++  <div class="container mt-4">
++    <div class="d-flex justify-content-between align-items-center mb-3">
++      <h2>Danh sách User</h2>
++    </div>
++    <nav aria-label="Page navigation">
++      <ul class="pagination justify-content-center">
++        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
++          <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1})}">Previous</a>
++        </li>
++        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
++            th:classappend="${i == currentPage ? 'active' : ''}">
++          <a class="page-link" th:href="@{/admin/users(page=${i})}" th:text="${i + 1}"></a>
++        </li>
++        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
++          <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1})}">Next</a>
++        </li>
++      </ul>
++    </nav>
++    <table class="table table-bordered">
++      <thead>
++      <tr>
++        <th>STT</th>
++        <th>Tên</th>
++        <th>Mail</th>
++        <th>Ngày tạo</th>
++      </tr>
++      </thead>
++      <tbody>
++      <tr th:each="user, iterStat : ${user}">
++        <td th:text="${iterStat.count + (currentPage * 10)}"></td>
++        <td th:text="${user.username}"></td>
++        <td th:text="${user.email}"></td>
++        <td th:text="${user.created_at}"></td>
++        <td>
++          <form th:action="@{/admin/users/delete/{id}(id=${user.user_id})}" method="post" style="display:inline;">
++            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
++            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Xóa</button>
++          </form>
++        </td>
++      </tr>
++      </tbody>
++    </table>
++  </div>
++</div>
++
++<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
++<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
++<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
++
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/resources/templates/edit_game.html
+===================================================================
+diff --git a/src/main/resources/templates/edit_game.html b/src/main/resources/templates/edit_game.html
+--- a/src/main/resources/templates/edit_game.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/edit_game.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,20 +1,18 @@
+ <!DOCTYPE html>
+-<html lang="en">
+-<head>
+-    <meta charset="UTF-8">
+-    <title><!DOCTYPE html>
+-      <html xmlns:th="http://www.thymeleaf.org">
+-      <head>
+-      <meta charset="UTF-8">
+-      <title>Edit Game</title>
++<html xmlns:th="http://www.thymeleaf.org">
++<head>
++  <meta charset="UTF-8">
++  <title>Edit Game</title>
+   <link rel="stylesheet" th:href="@{/css/admin.css}">
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ </head>
+ <body>
+ <div class="container mt-4">
+   <h2>Edit Game</h2>
+-  <form th:action="@{/admin/edit/{id}(id=${game.gameId})}" th:object="${game}" method="post">
++  <form th:action="@{/admin/edit/{id}(id=${game.gameId}, page=${page})}" th:object="${game}" method="post" enctype="multipart/form-data">
++    <input type="hidden" th:name="page" th:value="${page}"/>
+     <input type="hidden" th:field="*{gameId}"/>
++
+     <div class="form-group">
+       <label for="gameName">Tên</label>
+       <input type="text" class="form-control" id="gameName" th:field="*{name}" required>
+@@ -40,8 +38,16 @@
+       <input type="text" class="form-control" id="gameDeveloper" th:field="*{developer}" required>
+     </div>
+     <div class="form-group">
+-      <label for="gameImage">Ảnh (URL)</label>
+-      <input type="url" class="form-control" id="gameImage" th:field="*{image}" required>
++      <label for="gameImage">Ảnh (PNG/JPG)</label>
++      <input type="file" class="form-control-file" id="gameImage" name="imageFile" accept=".png, .jpg, .jpeg" onchange="previewImage(event)">
++      <div th:if="${game.image}">
++        <p>Ảnh cũ:</p>
++        <img th:src="@{${game.image}}" alt="Current Image" style="max-width: 200px; margin-top: 10px;">
++      </div>
++      <div id="imagePreview" style="display: none; margin-top: 10px;">
++        <p>Ảnh mới:</p>
++        <img id="previewImg" alt="Preview Image" style="max-width: 200px;">
++      </div>
+     </div>
+     <div class="form-group">
+       <label for="gameVideo">Video (URL)</label>
+@@ -61,5 +67,23 @@
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
++<script>
++  function previewImage(event) {
++    const file = event.target.files[0];
++    const previewContainer = document.getElementById('imagePreview');
++    const previewImg = document.getElementById('previewImg');
++
++    if (file) {
++      const reader = new FileReader();
++      reader.onload = function(e) {
++        previewImg.src = e.target.result;
++        previewContainer.style.display = 'block';
++      };
++      reader.readAsDataURL(file);
++    } else {
++      previewContainer.style.display = 'none';
++    }
++  }
++</script>
+ </body>
+ </html>
+\ No newline at end of file
+Index: src/main/resources/templates/game_home.html
+===================================================================
+diff --git a/src/main/resources/templates/game_home.html b/src/main/resources/templates/game_home.html
+--- a/src/main/resources/templates/game_home.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/game_home.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -13,9 +13,10 @@
+         <div class="video-section">
+             <div class="video">
+                 <div th:if="${game.video != null}">
+-                    <iframe width="100%" height="315" th:src="@{'https://www.youtube.com/embed/' + ${#strings.substringAfter(game.video, 'v=')}}"
+-                            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+-                    </iframe>
++                    <video width="100%"  controls>
++                        <source th:src="${game.video}" type="video/webm">
++                        Your browser does not support the video tag.
++                    </video>
+                 </div>
+                 <div th:unless="${game.video != null}">
+                     <p>Không có video</p>
+Index: src/main/resources/templates/login.html
+===================================================================
+diff --git a/src/main/resources/templates/login.html b/src/main/resources/templates/login.html
+--- a/src/main/resources/templates/login.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/login.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -10,7 +10,7 @@
+     <div class="heading">Sign In</div>
+     <form class="form" th:action="@{/login}" method="post">
+         <div class="input-field">
+-            <input required="" autocomplete="off" type="text" name="username"  id="username" />
++            <input required="" autocomplete="on" type="text" name="username"  id="username" />
+             <label for="username">Full Name</label>
+         </div>
+         <div class="input-field">
+Index: src/main/resources/templates/navbar.html
+===================================================================
+diff --git a/src/main/resources/templates/navbar.html b/src/main/resources/templates/navbar.html
+--- a/src/main/resources/templates/navbar.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/navbar.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -15,10 +15,10 @@
+                 <ul>
+                     <li th:block sec:authorize="isAnonymous()">
+                         <a th:href="@{/login}">Login</a>
+-
+                     </li>
+                     <li th:block sec:authorize="isAuthenticated()">
+-                        <h2>Welcome, <span th:text="${#authentication.name}"></span>!</h2>
++
++                        <a th:href="@{/profile}"><span th:text="${#authentication.name}"></span></a>
+                     </li>
+                     <li th:block sec:authorize="isAuthenticated()">
+                         <form th:action="@{/logout}" method="post">
+Index: src/main/resources/templates/news.html
+===================================================================
+diff --git a/src/main/resources/templates/news.html b/src/main/resources/templates/news.html
+--- a/src/main/resources/templates/news.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/news.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -10,7 +10,7 @@
+ <body>
+ <div th:insert="navbar::navbar"></div>
+ 
+-<div class="news_content">
++<div class="hot_news_content">
+     <img class="news_img" th:src="${featuredNews.image}" th:alt="${featuredNews.title}"/>
+     <h1 th:text="${featuredNews.title}">News</h1>
+ </div>
+Index: src/main/resources/templates/signup.html
+===================================================================
+diff --git a/src/main/resources/templates/signup.html b/src/main/resources/templates/signup.html
+--- a/src/main/resources/templates/signup.html	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/templates/signup.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -7,7 +7,7 @@
+ </head>
+ <body>
+ <div class="container">
+-    <div class="heading">Sign In</div>
++    <div class="heading">Sign Up New Account</div>
+     <form class="form" th:action="@{/signup}" th:object="${userDTO}" method="post">
+         <div class="input-field">
+             <input required="" autocomplete="off" type="text" th:field="*{username}"  id="username" />
+@@ -22,9 +22,10 @@
+             <label for="password">Password</label>
+         </div>
+         <div class="input-field">
+-            <input required="" autocomplete="off" type="password"  id="confirmpassword" />
+-            <label for="password">Password</label>
++            <input required="" autocomplete="off" type="password" th:field="*{confirmPassword}" id="confirmpassword" />
++            <label for="confirmpassword">Retype Password</label>
+         </div>
++
+         <div class="btn-container">
+             <button class="btn" type="submit">Sign Up</button>
+         </div>
+@@ -34,7 +35,20 @@
+ 
+     </div>
+     </form>
+-
+ </div>
++<script>
++    document.addEventListener("DOMContentLoaded", function () {
++        document.querySelector(".form").addEventListener("submit", function (event) {
++            let password = document.getElementById("password").value;
++            let confirmPassword = document.getElementById("confirmpassword").value;
++
++            if (password !== confirmPassword) {
++                alert("Passwords do not match! Please retype correctly.");
++                event.preventDefault();
++            }
++        });
++    });
++</script>
++
+ </body>
+ </html>
+\ No newline at end of file
+Index: src/main/resources/templates/steam_game.html
+===================================================================
+diff --git a/src/main/resources/templates/steam_game.html b/src/main/resources/templates/steam_game.html
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/resources/templates/steam_game.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,106 @@
++<!DOCTYPE html>
++<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
++<head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <title th:text="${game.name} ?: 'Steam Game'"></title>
++    <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
++</head>
++<body>
++<div th:insert="navbar::navbar"></div>
++<div class="content">
++    <div class="container">
++        <div class="video-section">
++            <div class="video">
++                <div th:if="${game.video != null}">
++                    <video width="100%" height="315" controls>
++                        <source th:src="${game.video}" type="video/webm">
++                        Your browser does not support the video tag.
++                    </video>
++                </div>
++                <div th:unless="${game.video != null}">
++                    <p>Không có video</p>
++                </div>
++            </div>
++            <!-- Steam API không cung cấp điểm đánh giá chi tiết, nên tạm bỏ rate-container hoặc dùng giá trị mặc định -->
++            <div class="rate-container">
++                <div class="rate-grid">
++                    <div class="rate-card">
++                        <div class="rate-info">
++                            <h3>Gameplay</h3>
++                            <p>Not available from Steam</p>
++                        </div>
++                        <div class="rate-value" id="gameplay-rate">N/A</div>
++                    </div>
++                    <div class="rate-card">
++                        <div class="rate-info">
++                            <h3>Music</h3>
++                            <p>Not available from Steam</p>
++                        </div>
++                        <div class="rate-value" id="music-rate">N/A</div>
++                    </div>
++                    <div class="rate-card">
++                        <div class="rate-info">
++                            <h3>Graphic</h3>
++                            <p>Not available from Steam</p>
++                        </div>
++                        <div class="rate-value" id="graphic-rate">N/A</div>
++                    </div>
++                    <div class="rate-card">
++                        <div class="rate-info">
++                            <h3>Story</h3>
++                            <p>Not available from Steam</p>
++                        </div>
++                        <div class="rate-value" id="story-rate">N/A</div>
++                    </div>
++                </div>
++            </div>
++        </div>
++        <div class="metascore-section">
++            <div class="metascore-container">
++                <div class="metascore-card">
++                    <div class="metascore-info">
++                        <h4>Metascore</h4>
++                        <h3>Not Available</h3>
++                        <p>Steam API Data</p>
++                    </div>
++                    <div class="metascore-value">N/A</div>
++                </div>
++                <div class="metascore-card">
++                    <div class="metascore-info">
++                        <h4>Userscore</h4>
++                        <h3>Not Available</h3>
++                        <p>Steam API Data</p>
++                    </div>
++                    <div class="metascore-value">N/A</div>
++                </div>
++            </div>
++            <div class="video-info">
++                <h1 th:text="${game.name} ?: 'Game Title'">Game Title</h1>
++                <p class="spaced-paragraph"><strong>Tags:</strong> <span th:text="${game.genre} ?: 'N/A'"></span></p>
++                <p class="spaced-paragraph"><strong>Developer:</strong> <span th:text="${game.developer} ?: 'N/A'"></span></p>
++                <p class="spaced-paragraph"><strong>Release Date:</strong> <span th:text="${#dates.format(game.releaseDate, 'dd MMM yyyy')} ?: 'N/A'"></span></p>
++            </div>
++        </div>
++    </div>
++    <hr class="divider">
++    <div class="game-detail">
++        <h1>Game Detail</h1>
++        <p class="spaced-paragraph" th:utext="${game.description} ?: 'No description available.'">Game description goes here.</p>
++    </div>
++    <hr class="divider">
++    <div class="game-detail">
++        <h1>Image</h1>
++        <div th:if="${game.image != null}">
++            <img th:src="${game.image}" alt="Game Header Image" style="max-width: 100%; height: auto;" />
++        </div>
++        <div th:unless="${game.image != null}">
++            <p>No image available.</p>
++        </div>
++    </div>
++</div>
++
++<!-- Không bao gồm review hoặc related games vì Steam API không cung cấp -->
++<script th:src="@{/js/gameScript.js}"></script>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/resources/templates/user_setting.html
+===================================================================
+diff --git a/src/main/resources/templates/user_setting.html b/src/main/resources/templates/user_setting.html
+new file mode 100644
+--- /dev/null	(revision f968790cb319003838c6b4533d548c8491465c48)
++++ b/src/main/resources/templates/user_setting.html	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -0,0 +1,114 @@
++<!DOCTYPE html>
++<html lang="en" xmlns:th="http://www.thymeleaf.org">
++<head>
++    <meta charset="UTF-8">
++    <title>Edit Account</title>
++    <link rel="stylesheet" th:href="@{/css/profile.css}">
++    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
++</head>
++<body>
++<div class="container mt-4">
++    <h2>Edit Profile</h2>
++    <form th:action="@{/profile/save}" method="post" enctype="multipart/form-data">
++        <div class="row profile-container">
++            <div class="col-md-5 profile-left">
++                <div class="form-group">
++                    <label for="avatar">Profile Picture</label>
++                    <div th:if="${userProfileDTO.avatar}">
++
++                        <img th:src="@{${userProfileDTO.avatar}}" alt="Current Avatar" style="max-width: 200px; margin-top: 10px;">
++                    </div>
++                    <div id="avatarPreview" style="display: none; margin-top: 10px;">
++                        <p>New Avatar:</p>
++                        <img id="previewImg" alt="Preview Avatar" style="max-width: 200px;">
++                    </div>
++                    <input type="file" class="form-control-file mt-2" id="avatar" name="avatar" accept=".png, .jpg, .jpeg" onchange="previewImage(event)">
++                </div>
++
++                <h5 class="mt-3">Name</h5>
++                <input type="text" class="form-control" id="name" th:value="${userDTO.username}" name="username" required>
++
++                <h5 class="mt-3">Gender</h5>
++                <select class="form-control" id="gender" name="gender">
++                    <option value="male" th:selected="${userProfileDTO.gender == 'male'}">Male</option>
++                    <option value="female" th:selected="${userProfileDTO.gender == 'female'}">Female</option>
++                    <option value="other" th:selected="${userProfileDTO.gender == 'other'}">Other</option>
++                </select>
++
++                <h5 class="mt-3">Date of Birth</h5>
++                <input type="date" class="form-control" id="dob" th:value="${userProfileDTO.birthdate != null ? userProfileDTO.birthdate.toString().substring(0,10) : ''}" name="birthdate" required>
++            </div>
++
++            <div class="col-md-7">
++                <h4>Email</h4>
++                <input type="email" class="form-control" id="email" th:value="${userDTO.email}" name="email" required>
++
++                <h4 class="mt-3">Interests</h4>
++                <input type="text" class="form-control" id="interests" th:value="${userProfileDTO.hobbies}" name="hobbies" placeholder="e.g., Gaming, Music, Coding">
++
++                <h4 class="mt-3">Bio</h4>
++                <textarea class="form-control" id="bio" rows="2" name="bio" th:text="${userProfileDTO.bio}" placeholder="Tell something about yourself..."></textarea>
++
++                <h4 class="mt-3">New Password</h4>
++                <div class="input-group">
++                    <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" autocomplete="new-password">
++                    <button type="button" class="btn btn-outline-secondary" id="toggleNewPassword">Show</button>
++                </div>
++
++                <h4 class="mt-3">Retype your new Password</h4>
++                <div class="input-group">
++                    <input type="password" class="form-control" id="RetypeNewPassword" name="retypeNewPassword" placeholder="Enter new password" autocomplete="new-password">
++                    <button type="button" class="btn btn-outline-secondary" id="toggleRetypePassword">Show</button>
++                </div>
++
++                <div class="mt-4">
++                    <button type="submit" class="btn btn-primary">Save Changes</button>
++                    <a href="/home" class="btn btn-secondary">Cancel</a>
++                </div>
++            </div>
++        </div>
++    </form>
++</div>
++
++<script>
++    function previewImage(event) {
++        const file = event.target.files[0];
++        const previewContainer = document.getElementById('avatarPreview');
++        const previewImg = document.getElementById('previewImg');
++
++        if (file) {
++            const reader = new FileReader();
++            reader.onload = function(e) {
++                previewImg.src = e.target.result;
++                previewContainer.style.display = 'block';
++            };
++            reader.readAsDataURL(file);
++        } else {
++            previewContainer.style.display = 'none';
++        }
++    }
++
++    document.getElementById('toggleNewPassword').addEventListener('click', function() {
++        var input = document.getElementById('newPassword');
++        if (input.type === 'password') {
++            input.type = 'text';
++            this.textContent = 'Hide';
++        } else {
++            input.type = 'password';
++            this.textContent = 'Show';
++        }
++    });
++
++    document.getElementById('toggleRetypePassword').addEventListener('click', function() {
++        var input = document.getElementById('RetypeNewPassword');
++        if (input.type === 'password') {
++            input.type = 'text';
++            this.textContent = 'Hide';
++        } else {
++            input.type = 'password';
++            this.textContent = 'Show';
++        }
++    });
++</script>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+--- a/src/main/resources/application.properties	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/src/main/resources/application.properties	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -1,11 +1,23 @@
+ spring.jpa.database-platform=org.hibernate.dialect.SQLServerDialect
+-
+ spring.jpa.hibernate.ddl-auto=none
+ spring.jpa.show-sql=true
+ 
+ spring.application.name=demo
++spring.mvc.produces=application/json
++spring.mvc.log-request-details=true
++
+ spring.datasource.url=jdbc:sqlserver://localhost\\DATVUCNTTVA1:1433;database=GameForum;encrypt=false;trustServerCertificate=false
+ spring.datasource.username=vudat
+ spring.datasource.password=datvu2003
+ 
++upload.dir=C:/hoctap/web/uploads/
++
++spring.servlet.multipart.max-file-size=10MB
++spring.servlet.multipart.max-request-size=10MB
+ 
++jwt.secret=datvu2003
++jwt.expirationInMs=3600000
++
++server.servlet.encoding.charset=UTF-8
++server.servlet.encoding.enabled=true
++server.servlet.encoding.force=true
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision f7d6ac66a666f04e9a20d022a7ff331d7669e68e)
++++ b/pom.xml	(revision f968790cb319003838c6b4533d548c8491465c48)
+@@ -69,7 +69,10 @@
+             <artifactId>lombok</artifactId>
+             <scope>provided</scope>
+         </dependency>
+-
++		<dependency>
++			<groupId>com.fasterxml.jackson.core</groupId>
++			<artifactId>jackson-databind</artifactId>
++		</dependency>
+ 		<dependency>
+ 			<groupId>org.slf4j</groupId>
+ 			<artifactId>slf4j-api</artifactId>
+@@ -82,7 +85,6 @@
+ 		<dependency>
+ 			<groupId>org.thymeleaf.extras</groupId>
+ 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+-			<!-- Temporary explicit version to fix Thymeleaf bug -->
+ 			<version>3.1.1.RELEASE</version>
+ 		</dependency>
+ 		<dependency>
+@@ -95,6 +97,26 @@
+ 			<artifactId>commons-codec</artifactId>
+ 			<version>1.14</version>
+ 		</dependency>
++		<dependency>
++			<groupId>org.modelmapper</groupId>
++			<artifactId>modelmapper</artifactId>
++			<version>3.2.0</version>
++		</dependency>
++		<dependency>
++			<groupId>io.jsonwebtoken</groupId>
++			<artifactId>jjwt</artifactId>
++			<version>0.9.1</version>
++		</dependency>
++		<dependency>
++			<groupId>org.springframework.boot</groupId>
++			<artifactId>spring-boot-starter-websocket</artifactId>
++		</dependency>
++		<dependency>
++			<groupId>javax.websocket</groupId>
++			<artifactId>javax.websocket-api</artifactId>
++			<version>1.1</version> <scope>provided</scope>
++		</dependency>
++
+ 	</dependencies>
+ 	<build>
+ 		<plugins>
+diff --git a/src/main/resources/static/css/select.css b/src/main/resources/static/ts/app.ts
+rename from src/main/resources/static/css/select.css
+rename to src/main/resources/static/ts/app.ts
