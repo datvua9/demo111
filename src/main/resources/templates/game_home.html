@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${game.name}"></title>
     <link rel="stylesheet" th:href="@{/css/gameStyle.css}" />
+    <link rel="stylesheet" th:href="@{/css/avatar.css}" />
 </head>
 <body>
 <div th:insert="navbar::navbar"></div>
 <div class="content">
     <div class="container">
         <div class="video-section">
+            <h1 th:text="${game.name}">Game Title</h1>
             <div class="video">
                 <div th:if="${game.video != null}">
                     <video width="100%"  controls>
@@ -108,7 +110,6 @@
             </div>
         </div>
             <div class="video-info">
-                <h1 th:text="${game.name}">Game Title</h1>
                 <p class="spaced-paragraph"><strong>Tags:</strong> <span th:text="${game.genre}"></span></p>
                 <p class="spaced-paragraph"><strong>Platform:</strong> <span th:text="${game.platform  }"></span></p>
                 <p class="spaced-paragraph"><strong>Developer:</strong> <span th:text="${game.developer}"></span></p>
@@ -306,12 +307,13 @@
         <div th:each="review : ${reviews}" class="review-card">
             <div class="review-header">
                 <div class="review-score" th:text="${review.getRating()}"></div>
+                <div class="avatar-container">
+                    <img class="user-avatar" th:src="${userProfiles.get(review.user.user_id) != null && userProfiles.get(review.user.user_id).avatar != null ? userProfiles.get(review.user.user_id).avatar : defaultAvatar}" alt="User Avatar">
+                </div>
                 <div class="review-info">
                     <span class="review-author" th:text="${review.user.username}"></span>
                     <span class="review-date" th:text="${review.reviewDate}"></span>
                 </div>
-
-
             </div>
             <div class="review-content">
                 <p th:text="${review.comment}"></p>

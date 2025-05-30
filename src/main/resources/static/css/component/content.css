@@ -1,0 +1,17 @@
+.content {
+    margin-left: 200px;
+    margin-right: 20px;
+    padding: 20px;
+    margin-top: 70px;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 20px;
+}

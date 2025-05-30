@@ -225,6 +225,48 @@ input .search-input{
     margin-top: 70px;
 }
 
+/* Responsive styles for navigation and layout */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .content {
+        margin-left: 150px;
+        margin-right: 10px;
+        padding: 15px;
+    }
+
+    .top-nav .right-menu {
+        gap: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 50px;
+        padding: 10px;
+    }
+
+    .content {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 10px;
+        margin-top: 120px;
+    }
+
+    .top-nav {
+        padding: 0 10px;
+    }
+
+    .top-nav .right-menu {
+        gap: 2px;
+    }
+}
+
 .container {
     display: flex;
     width: 100%;
@@ -234,6 +276,21 @@ input .search-input{
     align-items: flex-start;
     padding: 10px;
     gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .video-section, .metascore-section {
+        width: 100% !important;
+    }
+
+    .rate-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 .video-section {
@@ -434,6 +491,8 @@ input .search-input{
 }
 .games-container {
     margin-bottom: 20px;
+    max-width: 1800px;
+    padding: 20px;
 }
 
 .game-card {
@@ -451,21 +510,33 @@ input .search-input{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(128, 90, 213, 0.8);
     color: white;
     border: none;
-    padding: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
 }
 .scroll-button:hover {
-    background-color: #0056b3;
+    background-color: rgba(193, 68, 255, 1);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .next-button {
-    right: 0;
+    right: 10px;
 }
 .pre-button {
-    left: 0;
+    left: 10px;
 }
 
 .game-card img {
@@ -608,6 +679,30 @@ input .search-input{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .review-container {
+        grid-template-columns: 1fr;
+    }
+
+    .rating-container {
+        grid-template-columns: 1fr !important;
+    }
+
+    .popup {
+        width: 95% !important;
+        padding: 15px !important;
+    }
+
+    .popup-header {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+    }
+
+    .box select {
+        width: 100% !important;
+    }
 }
 
 .review-card {
@@ -837,6 +932,41 @@ input .search-input{
     margin-bottom: 20px;
     margin-left: 300px;
 }
+
+@media (max-width: 768px) {
+    .news_image {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .news_title {
+        font-size: 24px;
+    }
+
+    .news_detail h1 {
+        font-size: 28px;
+    }
+
+    .news_content, .hot_news_content {
+        margin-left: 0 !important;
+        padding: 10px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .news_image {
+        width: 100%;
+    }
+
+    .news_title {
+        font-size: 20px;
+    }
+
+    .news_detail h1 {
+        font-size: 24px;
+    }
+}
 .news_paragraph {
     text-indent: 30px;
     margin-bottom: 15px;
@@ -871,4 +1001,71 @@ input .search-input{
         width: 90%;
         padding: 15px;
     }
+}
+.game_navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+}
+.game_navbar-brand a {
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-toggle {
+    background-color: #555;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    padding: 10px;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.filter-section {
+    margin-bottom: 10px;
+}
+.filter-section label {
+    display: block;
+    margin: 5px 0;
+}
+.apply-filter {
+    background-color: #007bff;
+    color: white;
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.pagination {
+    margin-top: 20px;
+}
+.page-item.disabled .page-link {
+    pointer-events: none;
+    opacity: 0.6;
+}
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+}
+
+
+.game-card:hover {
+    transform: scale(1.03);
 }

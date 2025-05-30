@@ -1,0 +1,15 @@
+@import url('component/global.css');
+@import url('component/top-nav.css');
+@import url('component/sidebar.css');
+@import url('component/primary-nav.css');
+@import url('component/content.css');
+@import url('component/video-section.css');
+@import url('component/rate-section.css');
+@import url('component/metascore.css');
+@import url('component/game-list.css');
+@import url('component/news-section.css');
+@import url('component/review-section.css');
+@import url('component/rating-system.css');
+@import url('component/pagination.css');
+@import url('component/dropdown.css');
+@import url('component/misc.css');

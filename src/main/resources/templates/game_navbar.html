@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/game_navbar.css}">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+<div th:fragment="game_navbar" class="game-navbar">
+    <div id="game-navbar-app" class="filter-container">
+        <form id="filterForm" action="/game_list" method="get" class="filter-form" @submit="submitForm">
+            <div class="filter-section">
+                <div class="filter-dropdown">
+                    <label for="category">Thể loại:</label>
+                    <select id="category" name="category" class="filter-select" v-model="filters.category">
+                        <option value="">Tất cả thể loại</option>
+                        <option v-for="cat in categories" :value="cat" :key="cat">{{ cat }}</option>
+                    </select>
+                </div>
+
+                <div class="filter-dropdown">
+                    <label for="year">Năm phát hành:</label>
+                    <select id="year" name="year" class="filter-select" v-model="filters.year">
+                        <option value="">Tất cả năm</option>
+                        <option v-for="y in years" :value="y" :key="y">{{ y }}</option>
+                    </select>
+                </div>
+
+                <div class="filter-dropdown">
+                    <label for="platform">Platform:</label>
+                    <select id="platform" name="platform" class="filter-select" v-model="filters.platform">
+                        <option value="">Tất cả nền tảng</option>
+                        <option v-for="plat in platforms" :value="plat" :key="plat">{{ plat }}</option>
+                    </select>
+                </div>
+
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-btn apply-btn">Áp dụng</button>
+                    <button type="button" class="filter-btn reset-btn" @click="resetFilters">Đặt lại</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const categories = /*[[${categories}]]*/ [];
+            const years = /*[[${years}]]*/ [];
+            const platforms = /*[[${platforms}]]*/ [];
+            const selectedCategory = /*[[${selectedCategory}]]*/ '';
+            const selectedYear = /*[[${selectedYear}]]*/ '';
+            const selectedPlatform = /*[[${selectedPlatform}]]*/ '';
+
+            new Vue({
+                el: '#game-navbar-app',
+                data: {
+                    categories: categories,
+                    years: years,
+                    platforms: platforms,
+                    filters: {
+                        category: selectedCategory,
+                        year: selectedYear,
+                        platform: selectedPlatform
+                    }
+                },
+                methods: {
+                    submitForm: function(event) {
+                    },
+                    resetFilters: function() {
+                        // Reset các filter
+                        this.filters.category = '';
+                        this.filters.year = '';
+                        this.filters.platform = '';
+                        // Set the form action to explicitly include page=0 to show first page of all games
+                        document.getElementById('filterForm').action = "/game_list?page=0";
+                        document.getElementById('filterForm').submit();
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

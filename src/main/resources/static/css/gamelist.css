@@ -1,0 +1,250 @@
+/* General Reset and Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: #1a202c;
+    line-height: 1.6;
+}
+
+/* Content Container */
+.content {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Game Navbar */
+.game-navbar {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.filter-container {
+    width: 100%;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-dropdown {
+    flex: 1;
+    min-width: 220px;
+}
+
+.filter-dropdown label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    font-size: 14px;
+    color: #1a202c;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.apply-btn {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+.apply-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.reset-btn {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+
+.reset-btn:hover {
+    background-color: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* Games Container */
+.games-container-2 {
+    padding: 20px 0;
+}
+
+.games-list-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.game-card-2 {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card-2:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.game-card-2 a {
+    display: block;
+    text-decoration: none;
+}
+
+.game-card-2 img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.games-info-2 {
+    padding: 16px;
+}
+
+.game-title-2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Updated Pagination */
+.pagination {
+    margin-top: 30px;
+    list-style: none; /* Remove default bullets */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.page-item {
+    margin: 0 4px;
+}
+
+.page-item .page-link {
+    display: inline-block;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    color: #3b82f6;
+    font-weight: 500;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.page-item.active .page-link {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+.page-item:not(.disabled) .page-link:hover {
+    background-color: #eff6ff;
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.page-item.disabled .page-link {
+    color: #9ca3af;
+    cursor: not-allowed;
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-dropdown {
+        width: 100%;
+    }
+
+    .filter-buttons {
+        margin-top: 16px;
+        justify-content: center;
+    }
+
+    .games-list-2 {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .game-card-2 img {
+        height: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content {
+        padding: 15px;
+    }
+
+    .game-navbar {
+        padding: 15px;
+    }
+
+    .game-title-2 {
+        font-size: 16px;
+    }
+
+    .page-item .page-link {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}

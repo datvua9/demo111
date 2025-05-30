@@ -49,3 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     processCards('.rate-card', '.rate-value');
     processCards('.review-card', '.review-score');
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý dropdown (đã xử lý bằng CSS hover, nhưng có thể thêm JS nếu cần)
+});

@@ -1,0 +1,21 @@
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #555;
+    margin: 20px 0;
+}
+
+.spaced-paragraph1 {
+    margin-top: 20px;
+    text-indent: 30px;
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.spaced-paragraph2 {
+    margin-top: 20px;
+    text-indent: 30px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding: 7px;
+}

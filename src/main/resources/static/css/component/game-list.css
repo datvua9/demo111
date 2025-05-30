@@ -1,0 +1,175 @@
+.games-container {
+    margin-bottom: 20px;
+    max-width: 1600px;
+    padding: 20px;
+}
+
+.games-list {
+    position: relative;
+    grid-template-columns: repeat(3, 1fr);
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.games-list-container {
+    display: flex;
+    transition: transform 0.3s ease;
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    padding-bottom: 17px;
+    margin-right: -17px;
+    scroll-behavior: smooth;
+}
+
+.games-list-container::-webkit-scrollbar {
+    display: none;
+}
+
+.games-list-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.game-card {
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.game-card:hover {
+    transform: scale(1.03);
+}
+
+.game-card img {
+    width: 250px;
+    height: 350px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.game-info {
+    text-align: center;
+    padding: 10px;
+}
+
+.game-title {
+    align-items: center;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.games-title {
+    margin-bottom: 5px;
+}
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(128, 90, 213, 0.8);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.scroll-button:hover {
+    background-color: rgba(193, 68, 255, 1);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.next-button {
+    right: 10px;
+}
+
+.pre-button {
+    left: 10px;
+}
+/*dsadsadsad*/
+.games-container-2 {
+    margin-bottom: 20px;
+    max-width: 1800px;
+    padding: 20px;
+}
+
+.games-list-2 {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 cột mỗi hàng */
+    gap: 20px; /* Khoảng cách giữa các card */
+    width: 100%;
+}
+
+.game-card-2 {
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.game-card-2:hover {
+    transform: scale(1.03);
+}
+
+.game-card-2 img {
+    width: 100%; /* Để ảnh responsive */
+    height: 350px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.game-info-2 {
+    text-align: center;
+    padding: 10px;
+}
+
+.game-title-2 {
+    align-items: center;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.games-title-2 {
+    margin-bottom: 5px;
+}
+
+/* Bỏ các style liên quan đến cuộn ngang */
+.scroll-button,
+.next-button,
+.pre-button {
+    display: none;
+}
+
+/* Thêm responsive */
+@media (max-width: 768px) {
+    .games-list-2 {
+        grid-template-columns: repeat(2, 1fr); /* 2 cột trên mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .games-list-2 {
+        grid-template-columns: 1fr; /* 1 cột trên màn hình rất nhỏ */
+    }
+}

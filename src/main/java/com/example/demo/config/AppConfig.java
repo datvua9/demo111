@@ -15,7 +15,6 @@ public class AppConfig {
     @Bean
     public RestTemplate restTemplate() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.61.11.42", 3128)));
         return new RestTemplate(factory);
     }
 

@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -108,8 +109,23 @@
                         <input type="text" class="form-control" id="gameDeveloper" name="developer" required>
                     </div>
                     <div class="form-group">
-                        <label for="gameImage">Ảnh (PNG/JPG)</label>
-                        <input type="file" class="form-control-file" id="gameImage" name="imageFile" accept=".png, .jpg, .jpeg" onchange="previewImage(event)" required>
+                        <label>Ảnh Game</label>
+                        <div class="mb-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceUrl" value="url" checked>
+                                <label class="form-check-label" for="imageSourceUrl">Thêm bằng URL</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceFile" value="file">
+                                <label class="form-check-label" for="imageSourceFile">Thêm từ file</label>
+                            </div>
+                        </div>
+                        <div id="imageUrlInput">
+                            <input type="url" class="form-control" id="gameImageUrl" name="imageUrl" placeholder="Nhập URL ảnh">
+                        </div>
+                        <div id="imageFileInput" style="display: none;">
+                            <input type="file" class="form-control-file" id="gameImage" name="imageFile" accept=".png, .jpg, .jpeg" onchange="previewImage(event)">
+                        </div>
                         <div id="imagePreview" style="display: none; margin-top: 10px;">
                             <p>Ảnh xem trước:</p>
                             <img id="previewImg" alt="Preview Image" style="max-width: 200px;">
@@ -138,6 +154,32 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Toggle between URL and file input based on radio button selection
+        $('input[name="imageSourceType"]').change(function() {
+            if ($(this).val() === 'url') {
+                $('#imageUrlInput').show();
+                $('#imageFileInput').hide();
+                $('#gameImageUrl').prop('required', true);
+                $('#gameImage').prop('required', false);
+            } else {
+                $('#imageUrlInput').hide();
+                $('#imageFileInput').show();
+                $('#gameImageUrl').prop('required', false);
+                $('#gameImage').prop('required', true);
+            }
+        });
+
+        // Preview image from URL
+        $('#gameImageUrl').on('input', function() {
+            const url = $(this).val();
+            if (url) {
+                $('#previewImg').attr('src', url);
+                $('#imagePreview').show();
+            } else {
+                $('#imagePreview').hide();
+            }
+        });
+
         $("#addGameForm").on("submit", function(event) {
             event.preventDefault();
             let formData = new FormData(this);

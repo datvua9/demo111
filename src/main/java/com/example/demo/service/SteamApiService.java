@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.GameDTO;
-import com.example.demo.model.Games;
-import com.example.demo.repository.GamesRepository;
+import com.example.demo.game.data.GameDTO;
+import com.example.demo.game.data.Games;
+import com.example.demo.game.GamesRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,20 +31,43 @@ public class SteamApiService {
 
     public GameDTO getGameData(Long appId) {
         try {
+            // First check if the game already exists in the database
+            Optional<Games> existingGame = gamesRepository.findBySteamAppId(appId);
+            if (existingGame.isPresent()) {
+                System.out.println("Game with steam_app_id " + appId + " already exists in database.");
+                GameDTO gameDTO = new GameDTO();
+                gameDTO.convertToEntity(existingGame.get());
+                return gameDTO;
+            }
+
+            // If game doesn't exist, fetch from Steam API
             String response = restTemplate.getForObject(STEAM_API_URL, String.class, appId);
             System.out.println("Steam API response: " + response);
             GameDTO gameDTO = parseGameData(response, appId);
 
             if (gameDTO != null && gameDTO.getName() != null) {
                 try {
+                    // Set default platform to PC and status to active (1)
+                    gameDTO.setPlatform("PC");
+                    gameDTO.setStatus(1);
+
                     Games gameEntity = gameDTO.toEntity();
                     gameEntity.setSteamAppId(appId);
+
+                    // Double-check to prevent race conditions
                     if (gamesRepository.findBySteamAppId(appId).isEmpty()) {
                         System.out.println("Saving new game to database: " + gameDTO.getName());
                         Games savedGame = gamesRepository.save(gameEntity);
                         System.out.println("Game saved with game_id: " + savedGame.getGameId());
+                        // Update the gameDTO with the saved game's ID
+                        gameDTO.setGameId(savedGame.getGameId());
                     } else {
                         System.out.println("Game with steam_app_id " + appId + " already exists in database.");
+                        // Get the existing game and convert to DTO
+                        Optional<Games> game = gamesRepository.findBySteamAppId(appId);
+                        if (game.isPresent()) {
+                            gameDTO.convertToEntity(game.get());
+                        }
                     }
                 } catch (Exception e) {
                     System.err.println("Error saving to database: " + e.getMessage());

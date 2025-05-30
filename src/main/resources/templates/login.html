@@ -2,33 +2,169 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Thêm các thẻ meta CSRF -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Login</title>
     <link rel="stylesheet" th:href="@{/css/signIn.css}">
+    <!-- Thêm Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 </head>
 <body>
-<div class="container">
-    <div class="heading">Sign In</div>
-    <form class="form" th:action="@{/login}" method="post">
-        <div class="input-field">
-            <input required="" autocomplete="on" type="text" name="username"  id="username" />
-            <label for="username">Full Name</label>
+
+<div id="login-app"> <!-- Root element cho Vue app -->
+    <div class="container">
+        <div class="heading">Sign In</div>
+
+        <!-- Thông báo logout (nếu có từ redirect) -->
+        <div v-if="showLogoutMessage" class="logout-message" style="color: green; text-align: center; margin-bottom: 15px;">
+            Logged out successfully
         </div>
-        <div class="input-field">
-            <input required="" autocomplete="off" type="password" name="password"  id="password" />
-            <label for="password">Password</label>
-        </div>
-        <div class="btn-container">
-            <button class="btn" type="submit">Login</button>
-            <div class="acc-text">
-                New here ?
-                <a th:href="@{/signup}">
-                    <span style="color : #0000ff; cursor : pointer;">Create Account</span>
-                </a>
+
+        <form class="form" @submit.prevent="handleLogin">
+            <!-- Vue sẽ quản lý username -->
+            <div class="input-field">
+                <input required autocomplete="username" type="text" name="username" id="username" v-model.trim="username" />
+                <label for="username">Username</label> <!-- Sửa "Full Name" thành "Username" -->
             </div>
-        </div>
-        <div th:if="${param.error}" style="color: red;">Invalid username or password</div>
-        <div th:if="${param.logout}" style="color: green;">Logged out successfully</div>
-    </form>
+            <!-- Vue sẽ quản lý password -->
+            <div class="input-field">
+                <input required autocomplete="current-password" type="password" name="password" id="password" v-model="password" />
+                <label for="password">Password</label>
+            </div>
+
+            <!-- Thông báo lỗi từ Vue -->
+            <div v-if="errorMessage" class="error-message" style="color: red; text-align: center; margin-bottom: 10px;">
+                {{ errorMessage }}
+            </div>
+
+            <div class="btn-container">
+                <button class="btn" type="submit" :disabled="isLoading">
+                    {{ isLoading ? 'Logging in...' : 'Login' }}
+                </button>
+                <div class="acc-text">
+                    New here ?
+                    <a th:href="@{/signup}">
+                        <span style="color : #0000ff; cursor : pointer;">Create Account</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    new Vue({
+        el: '#login-app',
+        data: {
+            username: '',
+            password: '',
+            isLoading: false,
+            errorMessage: '',
+            csrfToken: null,
+            csrfHeader: null,
+            showLogoutMessage: false
+        },
+        methods: {
+            handleLogin() {
+                if (!this.username || !this.password) {
+                    this.errorMessage = 'Username and password are required.';
+                    return;
+                }
+
+                this.isLoading = true;
+                this.errorMessage = '';
+
+                // Spring Security /login endpoint mong đợi dữ liệu form (x-www-form-urlencoded)
+                const bodyParams = new URLSearchParams();
+                bodyParams.append('username', this.username);
+                bodyParams.append('password', this.password);
+                // CSRF token được gửi qua header, không cần thêm vào body cho /login với cấu hình mặc định
+
+                fetch(/*[[@{/login}]]*/ '/login', { // Sử dụng Thymeleaf để lấy URL động
+                    method: 'POST',
+                    headers: {
+                        [this.csrfHeader]: this.csrfToken
+                        // 'Content-Type': 'application/x-www-form-urlencoded' // URLSearchParams tự động đặt header này
+                    },
+                    body: bodyParams,
+                    redirect: 'follow' // Mặc định của fetch, nhưng rõ ràng hơn
+                })
+                    .then(response => {
+                        // fetch API coi redirect (3xx) là response thành công (response.ok = true)
+                        // Chúng ta cần kiểm tra URL cuối cùng sau khi redirect
+                        if (response.ok && response.redirected) {
+                            const finalUrl = new URL(response.url); // URL sau khi redirect
+                            const loginPageUrlPath = /*[[@{/login}]]*/ '/login';
+
+                            if (finalUrl.pathname === loginPageUrlPath && finalUrl.searchParams.has('error')) {
+                                // Redirect về trang login với ?error -> login thất bại
+                                this.errorMessage = 'Invalid username or password.';
+                            } else {
+                                // Redirect đến một trang khác -> login thành công
+                                // Trình duyệt sẽ tự động điều hướng đến response.url
+                                window.location.href = response.url;
+                            }
+                        } else if (!response.ok) {
+                            // Các lỗi HTTP khác (401, 403, 500) mà không phải redirect
+                            // Điều này ít xảy ra với /login mặc định của Spring Security,
+                            // vì nó thường redirect ngay cả khi lỗi.
+                            this.errorMessage = 'Login failed. Please check your credentials or server status.';
+                            // Bạn có thể muốn đọc response.text() để biết thêm chi tiết lỗi
+                            response.text().then(text => console.error("Login error response:", text));
+                        } else {
+                            // response.ok nhưng không redirected (hiếm với /login mặc định)
+                            // Có thể là một cấu hình tùy chỉnh nơi server trả về 200 OK với JSON.
+                            // Nếu vậy, bạn cần xử lý body của response ở đây.
+                            // Với cấu hình mặc định, đây là trường hợp không mong đợi.
+                            this.errorMessage = 'Unexpected response from the server.';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Login request error:', err);
+                        this.errorMessage = 'An error occurred during login. Please try again.';
+                    })
+                    .finally(() => {
+                        this.isLoading = false;
+                    });
+            }
+        },
+        mounted() {
+            // Lấy CSRF token và header từ thẻ meta
+            this.csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            this.csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            // Kiểm tra các URL parameters ban đầu (ví dụ: ?logout, ?error)
+            const urlParams = new URLSearchParams(window.location.search);
+            let paramsModified = false;
+
+            if (urlParams.has('logout')) {
+                this.showLogoutMessage = true;
+                urlParams.delete('logout');
+                paramsModified = true;
+            }
+
+            if (urlParams.has('error')) {
+                // Chỉ hiển thị lỗi này nếu Vue chưa tự đặt lỗi nào khác
+                if (!this.errorMessage) {
+                    this.errorMessage = 'Invalid username or password.';
+                }
+                urlParams.delete('error');
+                paramsModified = true;
+            }
+
+            // Xóa các params 'logout' và 'error' khỏi URL để không hiển thị lại khi refresh
+            if (paramsModified) {
+                const newQueryString = urlParams.toString();
+                const newUrl = window.location.pathname + (newQueryString ? `?${newQueryString}` : '');
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+    });
+    /*]]>*/
+</script>
+
 </body>
 </html>

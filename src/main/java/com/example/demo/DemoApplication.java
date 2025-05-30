@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @SpringBootApplication
-@EnableJpaRepositories("com.example.demo.repository")
 public class DemoApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {

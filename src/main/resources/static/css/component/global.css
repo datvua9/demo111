@@ -1,0 +1,26 @@
+/* Reset mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, Serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #423a49;
+    color: #ffffff;
+}
+
+span, strong {
+    font-size: 16pt;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #7F6F8EFF;
+}
