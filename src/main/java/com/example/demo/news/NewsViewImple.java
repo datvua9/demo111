@@ -16,9 +16,6 @@ public class NewsViewImple {
         this.newsService = newsService;
         this.commentServiceImple = commentServiceImple;
     }
-   public List<NewsDTO> getAllNews(){
-        return newsService.getAllNewsList();
-   }
 
    public NewsDTO getNewsDetails(Long id){
         return newsService.getNewsById(id);

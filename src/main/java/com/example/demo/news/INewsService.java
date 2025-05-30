@@ -9,7 +9,6 @@ import java.util.List;
 public interface INewsService {
     NewsDTO getNewsById(Long id);
     Page<NewsDTO> getAllNews(Pageable pageable);
-    List<NewsDTO> getAllNewsList();
     NewsDTO createNews(NewsDTO newsDTO);
     NewsDTO updateNews(Long id, NewsDTO newsDTO);
     boolean deleteNews(Long id);

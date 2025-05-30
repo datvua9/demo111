@@ -15,10 +15,7 @@ public class NewsRestImple {
         this.newsService = newsService;
     }
 
-    public ResponseEntity<List<NewsDTO>> getAllNews() {
-        List<NewsDTO> newss = newsService.getAllNewsList();
-        return new ResponseEntity<>(newss, HttpStatus.OK);
-    }
+
 
     public ResponseEntity<NewsDTO> createNews(NewsDTO newsDTO) {
         NewsDTO creatednews = newsService.createNews(newsDTO);

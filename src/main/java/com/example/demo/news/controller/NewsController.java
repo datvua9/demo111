@@ -34,18 +34,7 @@ public class NewsController {
         this.userProfileRepository = userProfileRepository;
     }
 
-    @GetMapping("")
-    public String news(Model model) {
-        NewsDTO featuredNews = newsService.getLatestNews();
-        if (featuredNews == null) {
-            featuredNews = newsService.getAllNewsList().get(0);
-        }
-        List<NewsDTO> allNews = newsService.getAllNewsList();
 
-        model.addAttribute("featuredNews", featuredNews);
-        model.addAttribute("allNews", allNews);
-        return "news";
-    }
 
     @GetMapping("/{id}")
     public String newsDetail(@PathVariable Long id, Model model) {
