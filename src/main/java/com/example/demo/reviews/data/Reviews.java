@@ -1,12 +1,11 @@
 package com.example.demo.reviews.data;
 
+import com.example.demo.game.data.Games;
 import com.example.demo.user.data.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
-
-@Data
+import java.time.LocalDate;@Data
 @Entity
 @Table(name = "Reviews")
 public class Reviews {
@@ -14,17 +13,19 @@ public class Reviews {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long review_id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "game_id")
-    private Long gameId;
+    @ManyToOne(fetch = FetchType.EAGER) // Tải ngay lập tức để đảm bảo game luôn có sẵn
+    @JoinColumn(name = "game_id")
+    private Games game;
 
     private int music_rating;
     private int gameplay_rating;
     private int story_rating;
     private int graphic_rating;
+
     @Transient
     private float rating;
     public float getRating() {
@@ -39,9 +40,9 @@ public class Reviews {
 
     public Reviews() {}
 
-    public Reviews(User user, Long gameId, int music_rating, int gameplay_rating, int story_rating, int graphic_rating, String comment, String platform, LocalDate reviewDate) {
+    public Reviews(User user, Games game, int music_rating, int gameplay_rating, int story_rating, int graphic_rating, String comment, String platform, LocalDate reviewDate) {
         this.user = user;
-        this.gameId = gameId;
+        this.game = game;
         this.music_rating = music_rating;
         this.gameplay_rating = gameplay_rating;
         this.story_rating = story_rating;
@@ -49,5 +50,19 @@ public class Reviews {
         this.comment = comment;
         this.platform = platform;
         this.reviewDate = reviewDate;
+    }
+
+    public Long getGameId() {
+        return game != null ? game.getGameId() : null;
+    }
+
+    public void setGameId(Long gameId) {
+        if (gameId != null) {
+            Games game = new Games();
+            game.setGameId(gameId);
+            this.game = game;
+        } else {
+            this.game = null;
+        }
     }
 }

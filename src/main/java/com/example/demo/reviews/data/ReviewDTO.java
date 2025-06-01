@@ -4,7 +4,6 @@ import com.example.demo.user.data.User;
 import lombok.Data;
 
 import java.time.LocalDate;
-
 @Data
 public class ReviewDTO {
     private Long review_id;
@@ -19,8 +18,15 @@ public class ReviewDTO {
     private LocalDate reviewDate;
     private String username;
     private String gameName;
+    private String userAvatar;
 
-    public ReviewDTO() {}
+    public String getUserAvatar() { return userAvatar; }
+    public void setUserAvatar(String userAvatar) { this.userAvatar = userAvatar; }
+
+    public ReviewDTO() {
+        this.username = "Unknown";
+        this.gameName = "Unknown";
+    }
 
     public ReviewDTO(Long gameId, int gameplay_rating, int music_rating, int graphic_rating, int story_rating, String comment, String platform, Long userId, LocalDate reviewDate) {
         this.gameId = gameId;
@@ -32,6 +38,8 @@ public class ReviewDTO {
         this.platform = platform;
         this.userId = userId;
         this.reviewDate = reviewDate;
+        this.username = "Unknown";
+        this.gameName = "Unknown";
     }
 
     public Reviews convertToReview(User user) {

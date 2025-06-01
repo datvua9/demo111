@@ -43,7 +43,7 @@ public class CommentService {
     private CommentDTO convertToDTO(Comment comment) {
         CommentDTO dto = new CommentDTO();
         dto.setComment_id(comment.getComment_id());
-        dto.setUserId(comment.getUser() != null ? comment.getUser().getUser_id() : null);
+        dto.setUserId(comment.getUser() != null ? comment.getUser().getUserId() : null);
         dto.setUsername(comment.getUser() != null ? comment.getUser().getUsername() : "Unknown");
         dto.setNewsId(comment.getNewsId());
         dto.setComment(comment.getComment());

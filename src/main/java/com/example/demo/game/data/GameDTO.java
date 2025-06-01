@@ -5,9 +5,9 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.example.demo.game.data.Games;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 @Data
 public class GameDTO {
@@ -23,7 +23,13 @@ public class GameDTO {
     private String video;
     private int status;
     private float rating;
-    private List<ReviewDTO> reviews;
+    private List<ReviewDTO> reviews = new ArrayList<>(); // Khởi tạo mặc định để tránh null
+
+    private java.math.BigDecimal avgGameplay;
+    private java.math.BigDecimal avgMusic;
+    private java.math.BigDecimal avgGraphic; // Đảm bảo tên nhất quán
+    private java.math.BigDecimal avgStory;
+    private java.math.BigDecimal overallReviewAverage;
 
     public GameDTO() {}
 
@@ -36,7 +42,7 @@ public class GameDTO {
 
     public GameDTO(Games gameEntity) {
         this.gameId = gameEntity.getGameId();
-        this.name = gameEntity.getName();
+        this.name = gameEntity.getName() != null ? gameEntity.getName() : "Unknown";
         this.description = gameEntity.getDescription();
         this.genre = gameEntity.getGenre();
         this.platform = gameEntity.getPlatform();
@@ -46,7 +52,6 @@ public class GameDTO {
         this.video = gameEntity.getVideo();
         this.status = gameEntity.getStatus();
     }
-
 
     public Games toEntity() {
         Games game = new Games();
@@ -63,9 +68,10 @@ public class GameDTO {
         game.setStatus(this.status);
         return game;
     }
+
     public void convertToEntity(Games games) {
         this.gameId = games.getGameId();
-        this.name = games.getName();
+        this.name = games.getName() != null ? games.getName() : "Unknown";
         this.description = games.getDescription();
         this.genre = games.getGenre();
         this.platform = games.getPlatform();
@@ -74,4 +80,5 @@ public class GameDTO {
         this.image = games.getImage();
         this.video = games.getVideo();
         this.status = games.getStatus();
-    }}
+    }
+}

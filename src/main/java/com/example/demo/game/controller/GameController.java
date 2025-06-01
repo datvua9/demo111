@@ -3,6 +3,7 @@ package com.example.demo.game.controller;
 import com.example.demo.game.IGameService;
 import com.example.demo.game.data.GameDTO;
 import com.example.demo.game.GameViewImple;
+import com.example.demo.reviews.data.ReviewDTO;
 import com.example.demo.reviews.data.Reviews;
 import com.example.demo.game.GameService;
 import com.example.demo.service.SteamApiService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,57 +38,53 @@ public class GameController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getGameDetails(@PathVariable Long id) {
-        GameDTO game = gameViewImple.getGameDetails(id);
-        if (game != null) {
-            List<Reviews> reviews = gameViewImple.getReviews(id);
-            Map<Long, UserProfile> userProfiles = new HashMap<>();
-            for (Reviews review : reviews) {
-                User user = review.getUser();
-                if (user != null) {
-                    UserProfile userProfile = userProfileRepository.findByUser(user);
-                    userProfiles.put(user.getUser_id(), userProfile);
-                }
-            }
+        // Yêu cầu GameViewImple trả về GameDTO đã chứa List<ReviewDTO>
+        GameDTO gameDTO = gameViewImple.getGameDetailsWithReviews(id); // Cần tạo/sửa method này trong GameViewImple
 
-            // Thêm baseUrl vào image
-            String baseUrl = "http://localhost:8081";
-            if (game.getImage() != null && !game.getImage().startsWith("http")) {
-                game.setImage(baseUrl + game.getImage());
-            }
-//            for (Reviews review : reviews) {
-//                if (review.getUser() != null && review.getUser().getUserProfile() != null &&
-//                        review.getUser().getUserProfile().getAvatar() != null &&
-//                        !review.getUser().getUserProfile().getAvatar().startsWith("http")) {
-//                    review.getUser().getUserProfile().setAvatar(baseUrl + review.getUser().getUserProfile().getAvatar());
-//                }
-//            }
-            // Ánh xạ relatedGames
-            List<GameDTO> relatedGames = gameService.getRelatedGames(game.getGenre());
-            relatedGames.forEach(relatedGame -> {
-                if (relatedGame.getImage() != null && !relatedGame.getImage().startsWith("http")) {
-                    relatedGame.setImage(baseUrl + relatedGame.getImage());
-                }
-            });
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("game", game);
-            response.put("totalReviews", reviews.size());
-            response.put("reviews", reviews);
-            response.put("relatedGames", relatedGames);
-            response.put("avgGameplay", Double.parseDouble(gameViewImple.calculateAverage(reviews, "gameplay").toString().replace(",", ".")));
-            response.put("avgMusic", Double.parseDouble(gameViewImple.calculateAverage(reviews, "music").toString().replace(",", ".")));
-            response.put("avgGraphic", Double.parseDouble(gameViewImple.calculateAverage(reviews, "graphic").toString().replace(",", ".")));
-            response.put("avgStory", Double.parseDouble(gameViewImple.calculateAverage(reviews, "story").toString().replace(",", ".")));
-            response.put("overallAverage", Double.parseDouble(gameViewImple.calculateOverallAverage(reviews).toString().replace(",", ".")));
-            response.put("userProfiles", userProfiles);
-            response.put("defaultAvatar", baseUrl + "/img/alec.png"); // Sửa thành URL đầy đủ
-
-            System.out.println("Game details for id " + id + ": " + response);
-            return ResponseEntity.ok(response);
-        } else {
+        if (gameDTO == null) {
             System.out.println("Game not found for id " + id);
             return ResponseEntity.notFound().build();
         }
+
+        // Danh sách ReviewDTO đã có trong gameDTO
+        List<ReviewDTO> reviewDTOs = gameDTO.getReviews() != null ? gameDTO.getReviews() : new ArrayList<>();
+
+        String baseUrl = "http://localhost:8081"; // Nên lấy từ cấu hình
+        // Xử lý URL hình ảnh cho game chính
+        if (gameDTO.getImage() != null && !gameDTO.getImage().startsWith("http")) {
+            if (!gameDTO.getImage().startsWith("/")) gameDTO.setImage(baseUrl + "/" + gameDTO.getImage());
+            else gameDTO.setImage(baseUrl + gameDTO.getImage());
+        }
+
+        // Xử lý URL hình ảnh cho related games (nếu relatedGames nằm trong GameDTO)
+        // Hoặc nếu bạn lấy relatedGames riêng:
+        List<GameDTO> relatedGames = gameService.getRelatedGames(gameDTO.getGenre()); // Giả sử đây là IGameService
+        relatedGames.forEach(relatedGame -> {
+            if (relatedGame.getImage() != null && !relatedGame.getImage().startsWith("http")) {
+                if (!relatedGame.getImage().startsWith("/")) relatedGame.setImage(baseUrl + "/" + relatedGame.getImage());
+                else relatedGame.setImage(baseUrl + relatedGame.getImage());
+            }
+        });
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("game", gameDTO); // gameDTO đã chứa List<ReviewDTO> reviews
+        response.put("totalReviews", reviewDTOs.size());
+        response.put("reviews", reviewDTOs); // Gửi List<ReviewDTO>
+        response.put("relatedGames", relatedGames); // Gửi danh sách relatedGames đã xử lý
+
+        // Các điểm avg... nên được tính và set vào GameDTO từ service/GameViewImple
+        // Hoặc truyền vào response map nếu GameDTO không có các trường này
+        response.put("avgGameplay", gameDTO.getAvgGameplay()); // Giả sử GameDTO có các trường này
+        response.put("avgMusic", gameDTO.getAvgMusic());
+        response.put("avgGraphic", gameDTO.getAvgGraphic()); // Sửa tên nếu cần
+        response.put("avgStory", gameDTO.getAvgStory());
+        response.put("overallAverage", gameDTO.getOverallReviewAverage()); // Hoặc gameDTO.getRating() tùy theo ý nghĩa
+
+        response.put("defaultAvatar", baseUrl + "/img/alec.png");
+
+        // System.out.println("Game details for id " + id + ": " + response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/steam/{appId}")

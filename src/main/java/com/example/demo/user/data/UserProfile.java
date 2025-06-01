@@ -27,4 +27,23 @@ public class UserProfile {
     private User user;
 
     public UserProfile() {}
+
+    public String getAvatar() {
+        if (avatar == null || avatar.isEmpty()) {
+            return null;
+        }
+        String normalizedAvatar = avatar;
+        if (normalizedAvatar.startsWith("//")) {
+            normalizedAvatar = "http:" + normalizedAvatar;
+        }
+        normalizedAvatar = normalizedAvatar.replaceAll("(?<!:)//+", "/");
+        if (!normalizedAvatar.startsWith("http://") && !normalizedAvatar.startsWith("https://")) {
+            return "http://localhost:8081" + (normalizedAvatar.startsWith("/") ? "" : "/") + normalizedAvatar;
+        }
+        String baseURL = "http://localhost:8081";
+        if (normalizedAvatar.contains(baseURL + baseURL)) {
+            normalizedAvatar = normalizedAvatar.replace(baseURL + baseURL, baseURL);
+        }
+        return normalizedAvatar;
+    }
 }

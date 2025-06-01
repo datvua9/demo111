@@ -15,7 +15,7 @@ public class UserDTO {
     private LocalDate created_at;
 
     public void convertToEntity(User user) {
-        this.user_id = user.getUser_id();
+        this.user_id = user.getUserId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.created_at = user.getCreated_at();

@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ReviewsRepository extends JpaRepository<Reviews, Long> {
     Page<Reviews> findAll(Pageable pageable);
-    List<Reviews> findByGameId(Long gameId);
-    Optional<Reviews> findByUserAndGameId(User user, Long gameId); // Sửa tên phương thức
+    List<Reviews> findByGame_GameId(Long gameId); // Sử dụng game.gameId
+    Optional<Reviews> findByUserAndGame_GameId(User user, Long gameId);
 }

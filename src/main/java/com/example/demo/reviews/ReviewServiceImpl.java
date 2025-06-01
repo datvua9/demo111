@@ -32,7 +32,7 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public List<Reviews> findByGameId(Long gameId) {
-        return reviewsRepository.findByGameId(gameId);
+        return reviewsRepository.findByGame_GameId(gameId);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public Reviews getReviewByUserAndGameId(User user, Long gameId) {
-        return reviewsRepository.findByUserAndGameId(user, gameId).orElse(null);
+        return reviewsRepository.findByUserAndGame_GameId(user, gameId).orElse(null);
     }
 }

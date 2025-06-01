@@ -60,7 +60,7 @@ public class ReviewApiController {
             }
 
             // Tạo review mới
-            reviewDTO.setUserId(user.getUser_id());
+            reviewDTO.setUserId(user.getUserId());
             reviewDTO.setReviewDate(LocalDate.now());
             Reviews review = reviewDTO.convertToReview(user);
             reviewService.saveReview(review);

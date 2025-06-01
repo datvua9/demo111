@@ -57,14 +57,5 @@ public class GameAPIController {
         }
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id") Long id) {
-        boolean deleted = gameService.deleteGame(id);
-        if (deleted) {
-            GameWebSocket.notifyClients("Game " + id + " deleted");
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 }

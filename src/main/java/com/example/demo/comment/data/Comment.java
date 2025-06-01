@@ -57,7 +57,7 @@ public class Comment {
     public String toString() {
         return "Comment{" +
                 "comment_id=" + comment_id +
-                ", user=" + (user != null ? "User(id=" + user.getUser_id() + ")" : "null") +
+                ", user=" + (user != null ? "User(id=" + user.getUserId() + ")" : "null") +
                 ", news=" + (news != null && org.hibernate.Hibernate.isInitialized(news) ? "News(id=" + news.getNewsId() + ", title=" + news.getTitle() + ")" : "not_initialized_or_null") +
                 ", comment='" + comment + '\'' +
                 ", comment_date=" + comment_date +

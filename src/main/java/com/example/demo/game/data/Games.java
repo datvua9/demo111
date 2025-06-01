@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
-
 @Data
 @Entity
 @Table(name = "games")
@@ -50,11 +49,11 @@ public class Games {
     @Column
     private int status;
 
-    @OneToMany
-    @JoinColumn(name = "game_id")
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY) // Giữ LAZY để tối ưu hiệu suất
     private List<Reviews> reviews;
 
     public Games() {}
+
     public void convertToDTO(GameDTO dto) {
         this.steamAppId = dto.getGameId();
         this.name = dto.getName();
@@ -66,5 +65,20 @@ public class Games {
         this.image = dto.getImage();
         this.video = dto.getVideo();
         this.status = dto.getStatus();
+    }
+
+    public String getImage() {
+        if (image == null || image.isEmpty()) {
+            return null;
+        }
+        String normalizedImage = image.replaceAll("(?<!:)//+", "/");
+        if (!normalizedImage.startsWith("http://") && !normalizedImage.startsWith("https://")) {
+            return "http://localhost:8081" + (normalizedImage.startsWith("/") ? "" : "/") + normalizedImage;
+        }
+        String baseURL = "http://localhost:8081";
+        if (normalizedImage.contains(baseURL + baseURL)) {
+            normalizedImage = normalizedImage.replace(baseURL + baseURL, baseURL);
+        }
+        return normalizedImage;
     }
 }
